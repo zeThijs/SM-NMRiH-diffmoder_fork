@@ -90,6 +90,14 @@ int CreateVscriptProxy(){
 	return proxy;
 }
 
+void BecomeCrawler(int entityreference){
+    RunEntVScript(entityreference, "BecomeCrawler()", g_iEnt_VscriptProxy);
+}
+
+bool BecomeRunner(int entityreference){
+    RunEntVScript(entityreference, "BecomeRunner()", g_iEnt_VscriptProxy);
+}
+
 
 bool IsValidShamblerzombie(int zombie)
 {
@@ -109,22 +117,35 @@ public void SDKHookCB_ZombieSpawnPost(int zombie)
 
 	float orgin[3];
 	GetEntPropVector(zombie, Prop_Send, "m_vecOrigin", orgin);
+    
 
 	switch(Game_GetMod())	{
-		case GameMod_Runner:		ShamblerToRunnerFromPosion(zombie, orgin, false);
-		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true); 
+		case GameMod_Runner:		BecomeRunner(EntIndexToEntRef(zombie))          ;
+		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true) ; 
 		case GameMod_AnkleBiters: {
-			if ( IsCrawler(zombie) )
-			{
-				PrintToServer("Hello, I am crawler");
-		        DHookEntity(g_dhook_change_zombie_ground_speed, true, zombie);
-        		DHookEntity(g_dhook_change_zombie_playback_speed, true, zombie);
-				g_zombie_speeds.Set(zombie, RandomSpeedScalar(g_cvar_crawler_speed, g_cvar_crawler_speed_plusminus));
-			}
+            BecomeCrawler(EntIndexToEntRef(zombie));
+            DataPack data = CreateDataPack();
+            data.WriteCell(zombie);
+            RequestFrame(CB_CrawlerSpeed, data);
 		}
 	}
 	SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 }
+
+
+public void CB_CrawlerSpeed(DataPack data)
+{
+    data.Reset();
+    int zombie = EntRefToEntIndex(data.ReadCell());
+    if (zombie<1 /*&& !IsValidShamblerzombie(zombie)*/ ){          //is zombie still alive?     -- TODO isvalidzombie needed? -> there aleady is a reference check..
+        return;
+    }
+    //PrintToServer("Hello, I am crawler");
+    DHookEntity(g_dhook_change_zombie_ground_speed, true, zombie);
+    DHookEntity(g_dhook_change_zombie_playback_speed, true, zombie);
+    g_zombie_speeds.Set(zombie, RandomSpeedScalar(g_cvar_crawler_speed, g_cvar_crawler_speed_plusminus));
+}
+
 
 void Game_ShamblerToRunner(const GameMod mod)
 {
@@ -134,9 +155,8 @@ void Game_ShamblerToRunner(const GameMod mod)
 		float orgin[3];
 		GetEntPropVector(zombie, Prop_Send, "m_vecOrigin", orgin);
 		switch(mod){
-			case GameMod_Runner:	ShamblerToRunnerFromPosion(zombie, orgin, false);
-			case GameMod_Kid:		{ShamblerToRunnerFromPosion(zombie, orgin, true);
-				}
+			case GameMod_Runner:	BecomeRunner(EntIndexToEntRef(zombie));
+			case GameMod_Kid:		ShamblerToRunnerFromPosion(zombie, orgin, true);
 		}
 	}
 }

@@ -124,6 +124,8 @@ public void OnPluginStart()
 	}
 }
 
+
+
 public void Event_Reset_Map(Event event, const char[] name, bool dontBroadcast){
     //re-create a VscriptProxy entity as it is deleted on map reset
     if(g_bEnable)
@@ -233,12 +235,6 @@ public void OnEntityCreated(int entity, const char[] classname)
 
 	if((entity > MaxClients) && IsValidEntity(entity)
 	&& StrEqual(classname, "npc_nmrih_shamblerzombie", false)){
-		//maybe have to hook first then set speed post spawn?
-		if (IsCrawler(entity)){
-		DHookEntity(g_dhook_change_zombie_ground_speed, true, entity);
-        DHookEntity(g_dhook_change_zombie_playback_speed, true, entity);
-		}
-		
 		SDKHook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 	}
 }
