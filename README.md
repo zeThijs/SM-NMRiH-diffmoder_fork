@@ -16,7 +16,7 @@ Feel free to use the code or plugin in any way
 
 Credits:
 
-Mostten - [NMRiH] Difficulty and Mod changer(zombies convert to all runners)  - Original diffmoder plugins
+Mostten - [NMRiH] Difficulty and Mod changer(zombies convert to all runners)  - Original diffmoder plugin
 Ryan    - [NMRiH] Zombie Speeds (v1.6, 2020-04-06)                            - speed manip snippets
 Dysphie - [NMRiH] Backpack 2                                                  - Vscript Proxy 
 </pre>
