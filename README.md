@@ -12,11 +12,13 @@ This fork includes some changes and features to the original, such as:
 - The option to toggle double jump; requires Double Jump (1.0.1) by Paegus (_https://forums.alliedmods.net/showthread.php?p=895212_)
 <pre>
 
+
+
 Feel free to use the code or plugin in any way
 
 Credits:
 
 Mostten - [NMRiH] Difficulty and Mod changer(zombies convert to all runners)  - Original diffmoder plugin
 Ryan    - [NMRiH] Zombie Speeds (v1.6, 2020-04-06)                            - speed manip snippets
-Dysphie - [NMRiH] Backpack 2                                                  - Vscript Proxy 
+Dysphie - [NMRiH] Backpack 2                                                  - Vscript Proxy, and giving the idea of using it
 </pre>
