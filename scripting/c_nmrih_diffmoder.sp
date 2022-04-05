@@ -15,11 +15,8 @@
 *		add timer to revert back to default mode after a time.
 *		add crawlerhell mode.
 *
-*
-*	Bugfix:
-*		timer not killed (invalid handle?) - using killtimer, and setting handle to INVALID_HANDLE when killed
-*		bug: normal zombies are sped up in crawlermode. ¯\_(ツ)_/¯
-*
+*	05-04-22
+*		Many bugfixes. Change shambler-to-crawler and shambler-to-runner methods to use ingame BecomeCrawler and BecomeShambler entity functions. This is achieved by using a vscript proxy.
 */
 
 
@@ -103,7 +100,7 @@ public void OnPluginStart()
 	g_cfg_hardcore = CreateConVar("nmrih_diffmoder_hardcore_default", "0", "Hardcore survival: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_difficulty = CreateConVar("nmrih_diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
 	g_cfg_casual_cooldown = CreateConVar("nmrih_diffmoder_casual_cooldown", "300", "Cooldown time after a casual switch, before a casual switch can be voted again.");
-	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "10.0", "Time until difmoder revert to default gamemode.");
+	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "1200.0", "Time until difmoder revert to default gamemode.");
 	AutoExecConfig();
 	
 	//Reg Cmd

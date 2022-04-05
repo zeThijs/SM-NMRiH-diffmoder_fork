@@ -1,0 +1,341 @@
+"Phrases"
+{
+	"Yes"
+	{
+		"en"			"yes"
+		"chi"			"是"
+		"ru"			"да"
+	}
+	"No"
+	{
+		"en"			"no"
+		"chi"			"否"
+		"ru"			"нет"
+	}
+	"On"
+	{
+		"en"			"on"
+		"chi"			"开"
+		"ru"			"включено"
+	}
+	"Off"
+	{
+		"en"			"off"
+		"chi"			"关"
+		"ru"			"выключено"
+	}
+	"VoteInProgress"
+	{
+		"en"			"Vote in Progress"
+		"chi"			"投票正在进行中"
+		"ru"			"Запущено голосование"
+	}
+	"NoVotesCast"
+	{
+		"en"			"No Votes Cast"
+		"chi"			"投票已经取消"
+		"ru"			"Голосование отменено"
+	}
+	"VoteFailed"
+	{
+		"en"			"Vote Failed"
+		"chi"			"投票未通过"
+		"ru"			"Голосование провалилось"
+	}
+	"VoteFinish"
+	{
+		"en"			"Vote Finish"
+		"chi"			"投票通过."
+		"ru"			"Голосование окончено"
+	}
+	"VoteByAlive"
+	{
+		"en"			"Vote only when you live"
+		"chi"			"你存活时才能进行投票."
+		"ru"			"Только живые могут голосовать"
+	}
+	"VoteFinishToOn"
+	{
+		"en"			"Vote Finish switch to on"
+		"chi"			"大部分玩家选择打开此参数"
+		"ru"			"Большинство проголосовало за включение"
+	}
+	"VoteFinishToOff"
+	{
+		"en"			"Vote Finish switch to off"
+		"chi"			"大部分玩家选择关闭此参数"
+		"ru"			"Большинство проголосовало за выключение"
+	}
+	"VoteDelayMinutes"
+	{
+		"#format"		"{1:d}"
+		"en"			"You must wait {1} minutes before starting another vote."
+		"chi"			"您必须再等 {1} 分钟后才能发起新一轮投票."
+		"ru"			"Вы должны подождать {1} минут, прежде чем начать новое голосование"
+	}
+	"VoteDelaySeconds"
+	{
+		"#format"		"{1:d}"
+		"en"			"You must wait {1} seconds before starting another vote."
+		"chi"			"您必须再等 {1} 秒钟后才能发起新一轮投票."
+		"ru"			"Вы должны подождать {1} секунд, прежде чем начать новое голосование"
+	}
+	"ChatFlag"
+	{
+		"en"			"[DiffModer]"
+		"chi"			"[系统]"
+		"ru"			"[DiffModer]"
+	}
+	"ModFlag"
+	{
+		"en"			"[Mod]"
+		"chi"			"[模式]"
+		"ru"			"[Режим]"
+	}
+	"DifFlag"
+	{
+		"en"			"[Difficulty]"
+		"chi"			"[难度]"
+		"ru"			"[Сложность]"
+	}
+	"RealismFlag"
+	{
+		"en"			"[Realism]"
+		"chi"			"[写实]"
+		"ru"			"[Реализм]"
+	}
+	"ConfigsFlag"
+	{
+		"en"			"[Configs]"
+		"chi"			"[参数]"
+		"ru"			"[Настройки]"
+	}
+	"FriendlyFlag"
+	{
+		"en"			"[Friendly Fire]"
+		"chi"			"[友伤]"
+		"ru"			"[Дружественный огонь]"
+	}
+	"HardcoreFlag"
+	{
+		"en"			"[Hardcore]"
+		"chi"			"[专家生还]"
+		"ru"			"[Хардкор]"
+	}
+	"ModDisable"
+	{
+		"en"			"The DiffModer was disabled."
+		"chi"			"服务器已禁止更改难度模式."
+		"ru"			"DiffModer был отключён"
+	}
+	"TopMenuTitle"
+	{
+		"en"			"[DiffModer] Select:"
+		"chi"			"[模式难度] 选择你的选项:"
+		"ru"			"[DiffModer]"
+	}
+	"TopMenuItemMod"
+	{
+		"en"			"Game Mod"
+		"chi"			"游戏模式"
+		"ru"			"Режим игры"
+	}
+	"TopMenuItemDifficult"
+	{
+		"en"			"Game Difficult"
+		"chi"			"游戏难度"
+		"ru"			"Сложность игры"
+	}
+	"TopMenuItemConfig"
+	{
+		"en"			"Game Configs"
+		"chi"			"游戏参数"
+		"ru"			"Настройки игры"
+	}
+	"ModMenuTitle"
+	{
+		"en"			"Mod Select"
+		"chi"			"选择模式"
+		"ru"			"Выберите режим:"
+	}
+	"ConfMenuTitle"
+	{
+		"en"			"Configs Select"
+		"chi"			"选择打开关闭参数"
+		"ru"			"Выберите настройки:"
+	}
+	"DifMenuTitle"
+	{
+		"en"			"Difficult Select"
+		"chi"			"选择难度"
+		"ru"			"Выберите сложность:"
+	}
+	"ModMenuItemRunner"
+	{
+		"en"			"Runner Mod"
+		"chi"			"全跑模式"
+		"ru"			"Только бегуны"
+	}
+	"ConfMenuItemRealism"
+	{
+		"en"			"Realism"
+		"chi"			"写实开关"
+		"ru"			"Реализм"
+	}
+	"ConfMenuItemFriendly"
+	{
+		"en"			"Friendly Fire"
+		"chi"			"友伤开关"
+		"ru"			"Дружественный огонь"
+	}
+	"ConfMenuItemHardcore"
+	{
+		"en"			"Hardcore"
+		"chi"			"专家生还开关"
+		"ru"			"Хардкор"
+	}
+	"ConfMenuItemInfinity"
+	{
+		"en"			"Infinity Ammo"
+		"chi"			"无限弹药开关"
+		"ru"			"бесконечное боеприпасов"
+	}
+	"ConfMenuItemDefault"
+	{
+		"en"			"default"
+		"chi"			"默认参数"
+		"ru"			"по умолчанию"
+	}
+	"DifMenuItemClassic"
+	{
+		"en"			"Classic"
+		"chi"			"经典难度"
+		"ru"			"Классика"
+	}
+	"ModMenuItemKid"
+	{
+		"en"			"Kid Mod"
+		"chi"			"全小孩模式"
+		"ru"			"Только дети"
+	}
+	"DifMenuItemCasual"
+	{
+		"en"			"Casual"
+		"chi"			"休闲难度"
+		"ru"			"Легко"
+	}
+	"DifMenuItemNightmare"
+	{
+		"en"			"Nightmare"
+		"chi"			"噩梦难度"
+		"ru"			"Кошмар"
+	}
+	"DifMenuItemDefault"
+	{
+		"en"			"default"
+		"chi"			"默认难度"
+		"ru"			"по умолчанию"
+	}
+	"ModMenuItemDefault"
+	{
+		"en"			"default"
+		"chi"			"默认模式"
+		"ru"			"по умолчанию"
+	}
+	"ModMenuRunerVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for all runner mod"
+		"chi"			"{1} 想投票更换全跑模式"
+		"ru"			"{1} запустил голосование за режим 'Только бегуны'"
+	}
+	"ConfMenuRealismVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for switch the realism"
+		"chi"			"{1} 想投票切换写实参数"
+		"ru"			"{1} запустил голосование за режим 'Реализм'"
+	}
+	"ConfMenuFriendlyVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for switch the friendly fire"
+		"chi"			"{1} 想投票切换友伤参数"
+		"ru"			"{1} запустил голосование за переключение режима дружественного огня"
+	}
+	"ConfMenuHardcoreVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for difficulty to hardcore"
+		"chi"			"{1} 想投票切换专家生还参数"
+		"ru"			"{1} запустил голосование за сложность 'Хардкор'"
+	}
+	"ConfMenuInfinityVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for ammo to infinity"
+		"chi"			"{1} 想投票切换专家生还参数"
+		"ru"			"{1} запустил голосование за боеприпасов до бесконечности"
+	}
+	"ConfMenuDefaultVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for switch the default configs"
+		"chi"			"{1} 想投票恢复参数"
+		"ru"			"{1} запустил голосование за возвращение настроек по умолчанию"
+	}
+	"DifMenuClassicVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for difficulty to classic"
+		"chi"			"{1} 想投票更换难度为经典难度"
+		"ru"			"{1} запустил голосование за сложность 'Хардкор'"
+	}
+	"DifMenuCasualVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for difficulty to casual"
+		"chi"			"{1} 想投票更换难度为休闲难度"
+		"ru"			"{1} запустил голосование за сложность 'Легко'"
+	}
+	"DifMenuNightmareVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for difficulty to nightmare"
+		"chi"			"{1} 想投票更换难度为噩梦难度"
+		"ru"			"{1} запустил голосование за сложность 'Кошмар'"
+	}
+	"DifMenuDefVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for default difficulty"
+		"chi"			"{1} 想投票更换回默认难度"
+		"ru"			"{1} запустил голосование за сложность по умолчанию"
+	}
+	"ModMenuKidVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for all kid mod"
+		"chi"			"{1} 想投票更换全小孩模式"
+		"ru"			"{1} запустил голосование за режим 'Только дети'"
+	}
+	"ModMenuDefVote"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} want to vote for default mod"
+		"chi"			"{1} 想投票更换回默认模式"
+		"ru"			"{1} запустил голосование за "
+	}
+	"DifMenuTitle"
+	{
+		"en"			"Difficulty Select"
+		"chi"			"选择难度"
+		"ru"			"Выберите сложность"
+	}
+	"ConfMenuTitle"
+	{
+		"en"			"Configs Select"
+		"chi"			"选择参数"
+		"ru"			"Выберите настройки"
+	}
+}

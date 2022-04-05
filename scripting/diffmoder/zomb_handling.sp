@@ -66,7 +66,7 @@ Handle g_sdkcall_get_sequence_name;
 #define CASE_INSENSITIVE false
 
 bool g_is_linux;
-int g_offset_is_crawler;
+//int g_offset_is_crawler;
 
 
 /**
@@ -224,7 +224,7 @@ void zombiespeeds_init(){
     }
 
     g_is_linux = GameConfGetOffsetOrFail(gameconf, "IsLinux") != 0;
-    g_offset_is_crawler = GameConfGetOffsetOrFail(gameconf, "CNMRiH_BaseZombie::m_bCrawler");
+    //g_offset_is_crawler = GameConfGetOffsetOrFail(gameconf, "CNMRiH_BaseZombie::m_bCrawler");
 
     StartPrepSDKCall(SDKCall_Entity);
     GameConfPrepSDKCallSignatureOrFail(gameconf, "CBaseAnimating::GetSequenceName");
@@ -329,13 +329,13 @@ bool IsMoveSequence(const char[] name)
         StrEqual(name, CRAWLER_CRAWL_WINDOWS);
 }
 
-/**
- * Check if a shambler is also a crawler.
- */
-bool IsCrawler(int shamblerdef)
-{
-    return GetEntData(shamblerdef, g_offset_is_crawler, 1) != 0;
-}
+// /**
+//  * Check if a shambler is also a crawler.
+//  */
+// bool IsCrawler(int shamblerdef)
+// {
+//     return GetEntData(shamblerdef, g_offset_is_crawler, 1) != 0;
+// }
 
 
 /**
