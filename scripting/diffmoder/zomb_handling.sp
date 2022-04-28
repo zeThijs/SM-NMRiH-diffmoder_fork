@@ -120,7 +120,11 @@ public void SDKHookCB_ZombieSpawnPost(int zombie)
     
 
 	switch(Game_GetMod())	{
-		case GameMod_Runner:		BecomeRunner(EntIndexToEntRef(zombie))          ;
+		case GameMod_Runner:		
+            {
+            //BecomeRunner(EntIndexToEntRef(zombie))          ; //disabling as this mod works TOO well: too many runners spawn for players
+            ShamblerToRunnerFromPosion(zombie, orgin, false);
+            }
 		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true) ; 
 		case GameMod_AnkleBiters: {
             BecomeCrawler(EntIndexToEntRef(zombie));

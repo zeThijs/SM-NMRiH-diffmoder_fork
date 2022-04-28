@@ -192,7 +192,6 @@ public Action Timertest(Handle timer)
 //disconnect before actually joining the game.
 public void OnClientConnected()
 {
-	PrintToServer("Player joined");
 	if( g_hDiffMod_Timer != INVALID_HANDLE ){
 		delete g_hDiffMod_Timer;				//stop timer
 		g_hDiffMod_Timer = INVALID_HANDLE;
