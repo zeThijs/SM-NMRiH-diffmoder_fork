@@ -12,7 +12,8 @@ This fork includes some changes and features to the original, such as:
 - The option to toggle double jump; requires Double Jump (1.0.1) by Paegus (_https://forums.alliedmods.net/showthread.php?p=895212_)
 <pre>
 
-
+Requires DHooks: 
+https://forums.alliedmods.net/showthread.php?t=180114
 
 Feel free to use the code or plugin in any way
 
