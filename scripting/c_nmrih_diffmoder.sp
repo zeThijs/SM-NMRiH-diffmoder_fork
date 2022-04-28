@@ -93,7 +93,7 @@ public void OnPluginStart()
 	sv_current_diffmode = CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
 	g_bEnable = g_cfg_diffmoder.BoolValue;
 	g_cfg_infinity = CreateConVar("nmrih_diffmoder_infinity_default", "0", "0 - Normal ammo/clip, 1 - Infinite ammo, 2 -  Infinite clip.", FCVAR_NONE, true, 0.0, true, 1.0);
-	g_cfg_doublejump = CreateConVar("g_cfg_doublejump_enabled.IntValue", "0", "Double Jump: 0 - disabled, 1 - enabled", FCVAR_NONE, true, 0.0, true, 1.0);
+	g_cfg_doublejump = CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cfg_gamemode = CreateConVar("nmrih_diffmoder_gamemode_default", "0", "0 - default gamemode, 1 - All runners, 2 - All kids, 3 - Crawlers", 0, true, 0.0, true, 2.0);
 	g_cfg_friendly = CreateConVar("nmrih_diffmoder_friendly_default", "0", "Friendly fire: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_realism = CreateConVar("nmrih_diffmoder_realism_default", "0", "Realism: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
