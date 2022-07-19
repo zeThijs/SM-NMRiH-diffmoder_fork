@@ -99,8 +99,9 @@ ConVar sv_max_runner_chance,
 	g_cfg_doublejump,
 
 	g_cfg_casual_cooldown,
-	g_cfg_autodefault_timer;
-
+	g_cfg_autodefault_timer,
+	g_cfg_modeswitch_time,
+	g_cfg_modeswitch_cooldown;
 
     bool g_bEnable;
 
@@ -240,7 +241,7 @@ bool TestVoteDelay(int client)
 	int delay = CheckVoteDelay();
 	if(!delay) return true;
 
-	if (delay > 60) PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelayMinutes", client, RoundToNearest(delay / 60.0));
+	if (delay > g_cfg_modeswitch_cooldown.IntValue) PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelayMinutes", client, RoundToNearest(delay / g_cfg_modeswitch_cooldown.IntValue));
 	else PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelaySeconds", client, delay);
 	return false;
 }

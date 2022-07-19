@@ -69,35 +69,38 @@ public void OnPluginStart()
 
 	LoadTranslations("nmrih.diffmoder.phrases");
 
-	(sv_max_runner_chance 	= FindConVar("sv_max_runner_chance")).AddChangeHook(OnConVarChanged);
 	(ov_runner_chance 		= FindConVar("ov_runner_chance")).AddChangeHook(OnConVarChanged);
 	(ov_runner_kid_chance 	= FindConVar("ov_runner_kid_chance")).AddChangeHook(OnConVarChanged);
+	(sv_max_runner_chance 	= FindConVar("sv_max_runner_chance")).AddChangeHook(OnConVarChanged);
 	(sv_zombie_shambler_crawler_chance = FindConVar("sv_zombie_shambler_crawler_chance")).AddChangeHook(OnConVarChanged);
 	(sv_zombie_crawler_health = FindConVar("sv_zombie_crawler_health")).AddChangeHook(OnConVarChanged);
-	(phys_pushscale 		= FindConVar("phys_pushscale")).AddChangeHook(OnConVarChanged);
 	(sv_spawn_density 		= FindConVar("sv_spawn_density")).AddChangeHook(OnConVarChanged);
 	(sv_zombie_moan_freq	= FindConVar("sv_zombie_moan_freq")).AddChangeHook(OnConVarChanged);
 	(sv_realism 			= FindConVar("sv_realism")).AddChangeHook(OnConVarChanged);
-	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
 	(sv_hardcore_survival 	= FindConVar("sv_hardcore_survival")).AddChangeHook(OnConVarChanged);
 	(sv_difficulty 			= FindConVar("sv_difficulty")).AddChangeHook(OnConVarChanged);
-	(g_cfg_diffmoder 		= CreateConVar("nmrih_diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
-	
+	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
+	(phys_pushscale 		= FindConVar("phys_pushscale")).AddChangeHook(OnConVarChanged);
+
 	sv_current_diffmode 	= CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
-	g_cfg_infinity 			= CreateConVar("nmrih_diffmoder_infinity_default", "0", "0 Normal ammo/clip, 1 Infinite ammo, 2 Infinite clip.", 0, true, 0.0, true, 1.0);
 	g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
+	(g_cfg_diffmoder 		= CreateConVar("nmrih_diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
+	g_cfg_infinity 			= CreateConVar("nmrih_diffmoder_infinity_default", "0", "0 Normal ammo/clip, 1 Infinite ammo, 2 Infinite clip.", 0, true, 0.0, true, 1.0);
 	g_cfg_gamemode 			= CreateConVar("nmrih_diffmoder_gamemode_default", "0", "0 - default gamemode, 1 - All runners, 2 - All kids, 3 - Crawlers", 0, true, 0.0, true, 3.0);
 	g_cfg_friendly 			= CreateConVar("nmrih_diffmoder_friendly_default", "0", "Friendly fire: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_realism 			= CreateConVar("nmrih_diffmoder_realism_default", "0", "Realism: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_hardcore 			= CreateConVar("nmrih_diffmoder_hardcore_default", "0", "Hardcore survival: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_difficulty 		= CreateConVar("nmrih_diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
-	g_cfg_casual_cooldown 	= CreateConVar("nmrih_diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finish");
-	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "1200.0", "Time until difmoder revert to default gamemode.");
+	g_cfg_casual_cooldown 	= CreateConVar("nmrih_diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finished");
+	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "1200.0", "Time until diffmoder revert to default gamemode.");
+	g_cfg_modeswitch_time	= CreateConVar("nmrih_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
+	g_cfg_modeswitch_cooldown	= CreateConVar("nmrih_diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
+
 
 	g_fCrawler_chance_default 		= sv_zombie_shambler_crawler_chance.FloatValue;
 	sv_zombie_crawler_health_default= sv_zombie_crawler_health.IntValue;
 	g_bEnable 						= g_cfg_diffmoder.BoolValue;
-	
+
 	AutoExecConfig();
 	
 	//Reg Cmd
