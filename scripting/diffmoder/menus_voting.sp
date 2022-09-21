@@ -101,6 +101,7 @@ ConVar sv_max_runner_chance,
 	g_cfg_casual_cooldown,
 	g_cfg_autodefault_timer,
 	g_cfg_modeswitch_time,
+	g_cfg_mapdefault,
 	g_cfg_modeswitch_cooldown;
 
     bool g_bEnable;

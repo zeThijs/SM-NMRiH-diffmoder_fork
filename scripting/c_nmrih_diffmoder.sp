@@ -93,6 +93,7 @@ public void OnPluginStart()
 	g_cfg_difficulty 		= CreateConVar("nmrih_diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
 	g_cfg_casual_cooldown 	= CreateConVar("nmrih_diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finished");
 	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "1200.0", "Time until diffmoder revert to default gamemode.");
+	g_cfg_mapdefault	 	= CreateConVar("nmrih_diffmoder_mapchange_default", "1", "0: off, 1: on. Change the diffmode to default after map change.");
 	g_cfg_modeswitch_time	= CreateConVar("nmrih_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
 	g_cfg_modeswitch_cooldown	= CreateConVar("nmrih_diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
 
@@ -129,6 +130,12 @@ public void Event_Reset_Map(Event event, const char[] name, bool dontBroadcast){
         SetupVscriptProxy();
 }
 public void OnMapStart(){
+
+	//revert to default mode 
+	if (g_cfg_mapdefault.IntValue == 1)
+	{
+		GameMod_Init();
+	}
     //create VscriptProxy
     if(g_bEnable)
         SetupVscriptProxy();
