@@ -16,6 +16,7 @@ https://forums.alliedmods.net/showthread.php?t=180114
 
 
 ## Cvars:
+<pre>
 - sv_current_diffmode                 -   Info about the current diffmode.           default:  0
 - g_cfg_doublejump_enabled            -   Double Jump:       0 disabled, 1 enabled.  default:  0
 - nmrih_diffmoder                     -   Enable/Disable plugin.                     default:  1
@@ -28,6 +29,7 @@ https://forums.alliedmods.net/showthread.php?t=180114
 - nmrih_diffmoder_casual_cooldown     -   Casual switch cooldown time.                                   default:  300
 - nmrih_autodefault_timer             -   Time in seconds until diffmoder reverts to default gamemode.   default:  1200
 - nmrih_diffmoder_mapchange_default   -   Change the diffmode to default after map change. 0: off, 1: on.default:  1
+</pre>
 
 ## Credits:
 <pre>
@@ -35,7 +37,7 @@ Feel free to use the code or plugin in any way
 
 Credits:
 
-Mostten - [NMRiH] Difficulty and Mod changer(zombies convert to all runners)  - Original diffmoder plugin
-Ryan    - [NMRiH] Zombie Speeds (v1.6, 2020-04-06)                            - speed manip snippets
-Dysphie - [NMRiH] Backpack 2                                                  - Vscript Proxy, and giving the idea of using it
+Mostten - [NMRiH] Difficulty and Mod changer        - Original diffmoder plugin
+Ryan    - [NMRiH] Zombie Speeds (v1.6, 2020-04-06)  - speed manip snippets
+Dysphie - [NMRiH] Backpack 2                        - Vscript Proxy, and giving the idea of using it
 </pre>
