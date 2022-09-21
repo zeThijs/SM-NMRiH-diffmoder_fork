@@ -29,6 +29,7 @@ https://forums.alliedmods.net/showthread.php?t=180114
 - nmrih_autodefault_timer             -   Time in seconds until diffmoder reverts to default gamemode.   default:  1200
 - nmrih_diffmoder_mapchange_default   -   Change the diffmode to default after map change. 0: off, 1: on.default:  1
 
+## Credits:
 <pre>
 Feel free to use the code or plugin in any way
 
