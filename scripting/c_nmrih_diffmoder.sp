@@ -58,7 +58,7 @@ public Plugin myinfo =
 	name		= PLUGIN_NAME,
 	author		= "Mostten, Rogue Garlicbread",
 	description	= "Allow player to enable the change difficult and mod by ballot.",
-	version		= "2.3",
+	version		= "2.3.1",
 	url			= "https://forums.alliedmods.net/showthread.php?t=301322"
 }
 
