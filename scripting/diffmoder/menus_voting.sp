@@ -102,12 +102,20 @@ ConVar sv_max_runner_chance,
 	g_cfg_autodefault_timer,
 	g_cfg_modeswitch_time,
 	g_cfg_mapdefault,
-	g_cfg_modeswitch_cooldown;
+	g_cfg_modeswitch_cooldown,
+	g_cfg_diffs_enabled;
 
-    bool g_bEnable;
+bool g_bEnable;
 
 
-//#include "diffmoder/consts.sp"
+
+enum struct Difficulties{
+    int   GameDif_Classic;
+    int   GameDif_Casual;
+    int   GameDif_Nightmare;
+}
+Difficulties DiffsEnabled;
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------- Menu and voting -----------------------------------------//
@@ -333,24 +341,49 @@ void DifMenu_ShowToClient(const int client)
 	Menu menu = new Menu(MenuHandler_DifMenu);
 	menu.SetTitle("%T", "DifMenuTitle", client);
 	
-	Format(item, sizeof(item), "%d", GameDif_Classic);
-	Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Classic)], client);
-	menu.AddItem(item, buffer);
-	
-	Format(item, sizeof(item), "%d", GameDif_Casual);
-	Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Casual)], client);
-	menu.AddItem(item, buffer);
-	
-	Format(item, sizeof(item), "%d", GameDif_Nightmare);
-	Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Nightmare)], client);
-	menu.AddItem(item, buffer);
-	
-	Format(item, sizeof(item), "%d", GameDif_Default);
-	Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Default)], client);
-	menu.AddItem(item, buffer);
+	if (DiffsEnabled.GameDif_Classic){
+		Format(item, sizeof(item), "%d", GameDif_Classic);
+		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Classic)], client);
+		menu.AddItem(item, buffer);
+	}
+		if (DiffsEnabled.GameDif_Casual){
+		Format(item, sizeof(item), "%d", GameDif_Casual);
+		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Casual)], client);
+		menu.AddItem(item, buffer);
+	}
+	if (DiffsEnabled.GameDif_Nightmare){
+		Format(item, sizeof(item), "%d", GameDif_Nightmare);
+		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Nightmare)], client);
+		menu.AddItem(item, buffer);
+	}
+
+	//What's the point of default choice?
+	// Format(item, sizeof(item), "%d", GameDif_Default);
+	// Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Default)], client);
+	// menu.AddItem(item, buffer);
 	
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
+}
+
+
+int GetEnabledDiffs()
+{
+	char buff[128];
+	char buff2[3][32];
+	g_cfg_diffs_enabled.GetString(buff, sizeof(buff));
+	int nDiffsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+
+	//PrintToServer("%s Found %d difficulty modes enabled", PLUGIN_NAME, nDiffsEnabled);
+	for (int i = 0; i < nDiffsEnabled; i++)
+	{
+		if 		(StrEqual("classic", 		buff2[i], false))
+			DiffsEnabled.GameDif_Classic 	= 1;
+		else if (StrEqual("casual", 		buff2[i], false))
+			DiffsEnabled.GameDif_Classic 	= 1;
+		else if (StrEqual("nightmare", 		buff2[i], false))
+			DiffsEnabled.GameDif_Nightmare 	= 1;
+	}
 }
 
 

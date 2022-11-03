@@ -30,15 +30,12 @@
 #include <string>
 #include <dhooks>
 
-//#include "diffmoder/consts.sp"
 #include "diffmoder/menus_voting.sp"
 #include "diffmoder/zomb_handling.sp"
 #include "diffmoder/consts.sp"
 float	g_fCrawler_chance_default;
 
 int sv_zombie_crawler_health_default;
-//int	phys_pushscale_default;
-
 
 int speedflag[4]={0,0,0,0};
 enum speedflag_enum{
@@ -47,6 +44,10 @@ enum speedflag_enum{
 	runner,
 	kid
 };
+
+
+
+
 
 Handle g_hDiffMod_Timer;
 
@@ -58,7 +59,7 @@ public Plugin myinfo =
 	name		= PLUGIN_NAME,
 	author		= "Mostten, Rogue Garlicbread",
 	description	= "Allow player to enable the change difficult and mod by ballot.",
-	version		= "2.3.1",
+	version		= "2.3.2",
 	url			= "https://forums.alliedmods.net/showthread.php?t=301322"
 }
 
@@ -96,6 +97,10 @@ public void OnPluginStart()
 	g_cfg_mapdefault	 	= CreateConVar("nmrih_diffmoder_mapchange_default", "1", "0: off, 1: on. Change the diffmode to default after map change.");
 	g_cfg_modeswitch_time	= CreateConVar("nmrih_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
 	g_cfg_modeswitch_cooldown	= CreateConVar("nmrih_diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
+	//
+	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled game difficulties. Difficulties not in this list cannot be diffmoded to.");
+
+	GetEnabledDiffs();
 
 
 	g_fCrawler_chance_default 		= sv_zombie_shambler_crawler_chance.FloatValue;
