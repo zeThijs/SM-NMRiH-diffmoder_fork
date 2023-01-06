@@ -8,7 +8,8 @@ char	sModItem[][] =
 	"ModMenuItemDefault",
 	"ModMenuItemRunner",
 	"ModMenuItemKid",
-	"ModMenuItemAnkleBiters"
+	"ModMenuItemAnkleBiters",
+	"ModMenuLazerZombies"
 };
 char	sDifItem[][] =
 {
@@ -23,7 +24,8 @@ char sModVote[][] = {
 	"ModMenuDefVote",
 	"ModMenuRunerVote",
 	"ModMenuKidVote",
-	"ModMenuAnkleBitersVote"
+	"ModMenuAnkleBitersVote",
+	"ModMenuLazerZombies"
 };
 char sDifVote[][] =
 {
@@ -57,7 +59,8 @@ enum GameMod{
 	GameMod_Default,
 	GameMod_Runner,
 	GameMod_Kid,
-	GameMod_AnkleBiters
+	GameMod_AnkleBiters,
+	GameMod_LaserZombies
 };
 enum GameDif{
 	GameDif_Default,
@@ -97,6 +100,7 @@ ConVar sv_max_runner_chance,
 	g_cfg_hardcore,
 	g_cfg_difficulty,
 	g_cfg_doublejump,
+	g_cfg_lazerzombies,
 
 	g_cfg_casual_cooldown,
 	g_cfg_autodefault_timer,
@@ -106,7 +110,7 @@ ConVar sv_max_runner_chance,
 	g_cfg_diffs_enabled;
 
 bool g_bEnable;
-
+bool g_bMutator_ZLazerEnabled;	//Zombie lazer mutator is only handled if found to be loaded on map start
 
 
 enum struct Difficulties{
@@ -215,6 +219,11 @@ void ModMenu_ShowToClient(const int client)
 	Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_AnkleBiters)], client);
 	menu.AddItem(item, buffer);
 
+	if (g_bMutator_ZLazerEnabled){
+		Format(item, sizeof(item), "%d", GameMod_LaserZombies);
+		Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_LaserZombies)], client);
+		menu.AddItem(item, buffer);
+	}
 	Format(item, sizeof(item), "%d", GameMod_Default);
 	Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Default)], client);
 	menu.AddItem(item, buffer);
@@ -367,7 +376,7 @@ void DifMenu_ShowToClient(const int client)
 }
 
 
-int GetEnabledDiffs()
+void GetEnabledDiffs()
 {
 	char buff[128];
 	char buff2[3][32];
@@ -380,7 +389,7 @@ int GetEnabledDiffs()
 		if 		(StrEqual("classic", 		buff2[i], false))
 			DiffsEnabled.GameDif_Classic 	= 1;
 		else if (StrEqual("casual", 		buff2[i], false))
-			DiffsEnabled.GameDif_Classic 	= 1;
+			DiffsEnabled.GameDif_Casual 	= 1;
 		else if (StrEqual("nightmare", 		buff2[i], false))
 			DiffsEnabled.GameDif_Nightmare 	= 1;
 	}

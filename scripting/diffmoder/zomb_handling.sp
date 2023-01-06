@@ -40,7 +40,7 @@
 // Signature:   bool CNMRiH_BaseZombie::IsTurned()
 // Description: Returns true if this zombie is a turned player.
 
-#include "diffmoder/vscript_proxy.sp"
+#include "vscript_proxy"
 
 int g_iEnt_VscriptProxy;
 
@@ -90,12 +90,13 @@ int CreateVscriptProxy(){
 	return proxy;
 }
 
-void BecomeCrawler(int entityreference){
-    RunEntVScript(entityreference, "BecomeCrawler()", g_iEnt_VscriptProxy);
+void BecomeCrawler(int entityref){
+    RunEntVScript(entityref, "BecomeCrawler()", g_iEnt_VscriptProxy);
 }
 
-bool BecomeRunner(int entityreference){
-    RunEntVScript(entityreference, "BecomeRunner()", g_iEnt_VscriptProxy);
+
+void BecomeRunner(int entityref){
+    RunEntVScript(entityref, "BecomeRunner()", g_iEnt_VscriptProxy);
 }
 
 
@@ -177,7 +178,7 @@ int FastZombie_Create(float orgin[3], bool isKid = false)
 }
 
 
-int ShamblerToRunnerFromPosion(int shamblerrunner, float[3] pos, bool isKid = false)
+int ShamblerToRunnerFromPosion(int shamblerrunner, float pos[3], bool isKid = false)
 {
 	AcceptEntityInput(shamblerrunner, "kill");
 	RemoveEdict(shamblerrunner);
@@ -199,8 +200,7 @@ void zombiespeeds_init(){
 	//-----------------setup zombie speeds------------------
 	g_zombie_speeds = new ArrayList(1, GetMaxEntities());
 
-    g_cvar_zombie_speeds_enabled = CreateConVar("sm_zombie_speeds_enabled", "1", 
-		"1 = Enable plugin. 0 = Disable plugin.");
+    g_cvar_zombie_speeds_enabled = CreateConVar("sm_zombie_speeds_enabled", "1", "1 = Enable plugin. 0 = Disable plugin.");
 
     g_cvar_crawler_speed = CreateConVar("sm_crawler_speed", "1.0",
         "Amount to scale crawlers' movement speed by. E.g. 1.0 means move at normal speed.");

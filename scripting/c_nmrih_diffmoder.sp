@@ -100,7 +100,7 @@ public void OnPluginStart()
 	//
 	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled game difficulties. Difficulties not in this list cannot be diffmoded to.");
 
-	GetEnabledDiffs();
+	
 
 
 	g_fCrawler_chance_default 		= sv_zombie_shambler_crawler_chance.FloatValue;
@@ -108,6 +108,7 @@ public void OnPluginStart()
 	g_bEnable 						= g_cfg_diffmoder.BoolValue;
 
 	AutoExecConfig();
+	GetEnabledDiffs();
 	
 	//Reg Cmd
 	RegConsoleCmd("sm_dif", Cmd_MenuTop);
@@ -135,7 +136,13 @@ public void Event_Reset_Map(Event event, const char[] name, bool dontBroadcast){
         SetupVscriptProxy();
 }
 public void OnMapStart(){
+	//idk if vscript loads before or after sourcemod and by how much
+	//for now ill just laate load mutatator stuff here
 
+	if (FindConVar("sv_lazed_enabled") != null)
+		g_bMutator_ZLazerEnabled = true;
+	else
+		PrintToServer("Mutator ZombieLazers not loaded, skipping..");
 	//revert to default mode 
 	if (g_cfg_mapdefault.IntValue == 1)
 	{
@@ -291,18 +298,21 @@ void GameMod_Enable(GameMod mod)
 	{
 		case GameMod_Runner:
 		{
+			RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 1.0;
 			ov_runner_kid_chance.FloatValue = 0.0;
 			phys_pushscale.IntValue = 1;
 		}
 		case GameMod_Kid:
 		{
+			RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 0.0;
 			ov_runner_kid_chance.FloatValue = 1.0;
 			phys_pushscale.IntValue = 1;
 		}
 		case GameMod_AnkleBiters:
 		{
+			RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
 			sv_max_runner_chance.FloatValue = 0.01;
 			ov_runner_kid_chance.FloatValue = 0.2;
 			sv_zombie_shambler_crawler_chance.FloatValue = CRAWLERCHANCE;
@@ -312,6 +322,11 @@ void GameMod_Enable(GameMod mod)
 			sv_zombie_crawler_health.IntValue = CRAWLERHEALTH_ANKLE;
 			phys_pushscale.IntValue = PUSHSCALE_ANKLE;
 			sv_spawn_density.FloatValue = SPAWNDENSITY_ANKLE;
+		}
+		case GameMod_LaserZombies:
+		{
+			//enable lazer zombies with LoadMutator()
+			RunEntVScript(g_iEnt_VscriptProxy, "LoadMutator()", g_iEnt_VscriptProxy);
 		}
 		case GameMod_Default: GameMod_Def();
 	}
