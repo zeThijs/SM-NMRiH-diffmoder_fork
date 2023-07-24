@@ -193,11 +193,10 @@ int ShamblerToRunnerFromPosion(int shamblerrunner, float pos[3], bool isKid = fa
 
 
 
-
+/*
+    setup zombie speeds
+*/
 void zombiespeeds_init(){    
-    //------------------------------------------------------
-	//------------------------------------------------------
-	//-----------------setup zombie speeds------------------
 	g_zombie_speeds = new ArrayList(1, GetMaxEntities());
 
     g_cvar_zombie_speeds_enabled = CreateConVar("sm_zombie_speeds_enabled", "1", "1 = Enable plugin. 0 = Disable plugin.");
@@ -205,20 +204,8 @@ void zombiespeeds_init(){
     g_cvar_crawler_speed = CreateConVar("sm_crawler_speed", "1.0",
         "Amount to scale crawlers' movement speed by. E.g. 1.0 means move at normal speed.");
 
-    //g_cvar_kid_speed = CreateConVar("sm_kid_speed", "1.0",        "Amount to scale kids' movement speed by. E.g. 0.8 means move 80% normal speed.");
-
-    //g_cvar_runner_speed = CreateConVar("sm_runner_speed", "1.0",        "Amount to scale runners' movement speed by. E.g. 0.8 means move 80% normal speed.");
-
-    //g_cvar_shambler_speed = CreateConVar("sm_shambler_speed", "1.0",        "Amount to scale shamblers' movement speed by. E.g. 1.2 means move 120% normal speed.");
-
     g_cvar_crawler_speed_plusminus = CreateConVar("sm_crawler_speed_plusminus", "0.05",
         "Set the range of random variation in crawlers' movement speed.");
-
-    //g_cvar_kid_speed_plusminus = CreateConVar("sm_kid_speed_plusminus", "0.0",        "Set the range of random variation in kids' movement speed.");
-
-    //g_cvar_shambler_speed_plusminus = CreateConVar("sm_shambler_speed_plusminus", "0.0",        "Set the range of random variation in shambler' movement speed.");
-
-    //g_cvar_runner_speed_plusminus = CreateConVar("sm_runner_speed_plusminus", "0.0",        "Set the range of random variation in runner' movement speed.");
 
     // Game data is necesary for our DHooks.
     Handle gameconf = LoadGameConfigFile("zombiespeeds.games");
@@ -228,7 +215,6 @@ void zombiespeeds_init(){
     }
 
     g_is_linux = GameConfGetOffsetOrFail(gameconf, "IsLinux") != 0;
-    //g_offset_is_crawler = GameConfGetOffsetOrFail(gameconf, "CNMRiH_BaseZombie::m_bCrawler");
 
     StartPrepSDKCall(SDKCall_Entity);
     GameConfPrepSDKCallSignatureOrFail(gameconf, "CBaseAnimating::GetSequenceName");
@@ -254,8 +240,6 @@ void zombiespeeds_init(){
     DHookAddParam(g_dhook_change_zombie_playback_speed, HookParamType_Int); // Activity
 
     AutoExecConfig(true);
-	//---------------end setup zombie speeds----------------
-	//------------------------------------------------------
 }
 
 

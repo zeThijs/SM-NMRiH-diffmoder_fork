@@ -290,6 +290,11 @@ void GameConfig_Def()
 	ServerCommand("sm_doublejump_enabled %d", g_cfg_doublejump.IntValue);
 }
 
+void UnloadMutator()
+{
+	RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
+}
+
 void GameMod_Enable(GameMod mod)
 {
 	SetConVarInt(sv_current_diffmode, (view_as<int>(mod)));
@@ -298,21 +303,24 @@ void GameMod_Enable(GameMod mod)
 	{
 		case GameMod_Runner:
 		{
-			RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
+			if (g_bMutator_ZLazerEnabled)
+				UnloadMutator();
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 1.0;
 			ov_runner_kid_chance.FloatValue = 0.0;
 			phys_pushscale.IntValue = 1;
 		}
 		case GameMod_Kid:
 		{
-			RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
+			if (g_bMutator_ZLazerEnabled)
+				UnloadMutator();
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 0.0;
 			ov_runner_kid_chance.FloatValue = 1.0;
 			phys_pushscale.IntValue = 1;
 		}
 		case GameMod_AnkleBiters:
 		{
-			RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
+			if (g_bMutator_ZLazerEnabled)
+				UnloadMutator();
 			sv_max_runner_chance.FloatValue = 0.01;
 			ov_runner_kid_chance.FloatValue = 0.2;
 			sv_zombie_shambler_crawler_chance.FloatValue = CRAWLERCHANCE;
