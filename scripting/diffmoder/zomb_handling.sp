@@ -90,6 +90,7 @@ int CreateVscriptProxy(){
 	return proxy;
 }
 
+
 void BecomeCrawler(int entityref){
     RunEntVScript(entityref, "BecomeCrawler()", g_iEnt_VscriptProxy);
 }
@@ -103,6 +104,14 @@ void BecomeRunner(int entityref){
 bool IsValidShamblerzombie(int zombie)
 {
 	if((zombie <= MaxClients) || !IsValidEntity(zombie)) return false;
+
+    //Fix bosses being tranformed: targetname check
+    decl String:sName[4];
+    GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
+    
+    if ( !StrEqual(sName, "", false))
+        return false;
+    
 
 	char classname[32];
 	GetEntityClassname(zombie, classname, sizeof(classname));
