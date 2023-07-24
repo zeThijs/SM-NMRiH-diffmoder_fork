@@ -11,7 +11,6 @@
 				"linux" "@_ZN14CBaseAnimating15GetSequenceNameEi"
 			}
 		}
-
 		"Offsets"
 		{
 			"IsLinux"
