@@ -103,19 +103,25 @@ void BecomeRunner(int entityref){
 
 bool IsValidShamblerzombie(int zombie)
 {
-	if((zombie <= MaxClients) || !IsValidEntity(zombie)) return false;
+    if ((zombie <= MaxClients))
+        return false;
+	if( !IsValidEntity(zombie) ) 
+        return false;
 
     //Fix bosses being tranformed: targetname check
     decl String:sName[4];
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
     
-    if ( !StrEqual(sName, "", false))
+    if ( !StrEqual(sName, "", false)){
+        PrintToServer("Has name, skipping..");
         return false;
-    
+    }
 
-	char classname[32];
+    //classname check broke, something is fucky, accidental whitespace?
+	decl String:classname[8];   //purposely omit trailing classname substring
 	GetEntityClassname(zombie, classname, sizeof(classname));
-	return StrEqual(classname, "npc_nmrih_shamblerzombie", false);
+
+	return StrEqual(classname, "npc_nmrih_shambler", false);
 }
 
 //transform shamblers to specials, and -not implemented yet- crawlers
