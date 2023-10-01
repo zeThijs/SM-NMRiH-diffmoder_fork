@@ -8,8 +8,7 @@ char	sModItem[][] =
 	"ModMenuItemDefault",
 	"ModMenuItemRunner",
 	"ModMenuItemKid",
-	"ModMenuItemAnkleBiters",
-	"ModMenuLazerZombies"
+	"ModMenuItemAnkleBiters"
 };
 char	sDifItem[][] =
 {
@@ -18,14 +17,29 @@ char	sDifItem[][] =
 	"DifMenuItemCasual",
 	"DifMenuItemNightmare"
 };
+char	DifStrings[][] =		//used when parsing diffenabled convar
+{
+	"Default",
+	"Classic",
+	"Casual",
+	"Nightmare"
+};
+char	ModStrings[][] =		//used when parsing modenabled convar
+{
+	"Default",
+	"Runner",
+	"Kid",
+	"Crawler"
+};
 
+bool DifsEnabled[sizeof(DifStrings)];
+bool ModsEnabled[sizeof(ModStrings)];
 
 char sModVote[][] = {
 	"ModMenuDefVote",
 	"ModMenuRunerVote",
 	"ModMenuKidVote",
-	"ModMenuAnkleBitersVote",
-	"ModMenuLazerZombies"
+	"ModMenuAnkleBitersVote"
 };
 char sDifVote[][] =
 {
@@ -107,18 +121,27 @@ ConVar sv_max_runner_chance,
 	g_cfg_modeswitch_time,
 	g_cfg_mapdefault,
 	g_cfg_modeswitch_cooldown,
-	g_cfg_diffs_enabled;
+	g_cfg_diffs_enabled,
+	g_cfg_mods_enabled;
 
 bool g_bEnable;
 bool g_bMutator_ZLazerEnabled;	//Zombie lazer mutator is only handled if found to be loaded on map start
 
 
-enum struct Difficulties{
-    int   GameDif_Classic;
-    int   GameDif_Casual;
-    int   GameDif_Nightmare;
-}
-Difficulties DiffsEnabled;
+// enum struct Difficulties{
+//     int   GameDif_Classic;
+//     int   GameDif_Casual;
+//     int   GameDif_Nightmare;
+// }
+// Difficulties DiffsEnabled;
+
+// enum struct Mods{
+//     int   GameDif_Runner;
+//     int   GameDif_Kids;
+//     int   GameDif_Crawler;
+// }
+// Mods ModsEnabled;
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,26 +230,28 @@ void ModMenu_ShowToClient(const int client)
 	Menu menu = new Menu(MenuHandler_ModMenu);
 	menu.SetTitle("%T", "ModMenuTitle", client);
 	
-	Format(item, sizeof(item), "%d", GameMod_Runner);
-	Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Runner)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameMod_Runner);
+	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Runner)], client);
+	// menu.AddItem(item, buffer);
 
-	Format(item, sizeof(item), "%d", GameMod_Kid);
-	Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Kid)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameMod_Kid);
+	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Kid)], client);
+	// menu.AddItem(item, buffer);
 
-	Format(item, sizeof(item), "%d", GameMod_AnkleBiters);
-	Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_AnkleBiters)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameMod_AnkleBiters);
+	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_AnkleBiters)], client);
+	// menu.AddItem(item, buffer);
 
-	if (g_bMutator_ZLazerEnabled){
-		Format(item, sizeof(item), "%d", GameMod_LaserZombies);
-		Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_LaserZombies)], client);
+	// Format(item, sizeof(item), "%d", GameMod_Default);
+	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Default)], client);
+	// menu.AddItem(item, buffer);
+	for ( int mod=0; mod < sizeof(ModStrings); mod++ )	{
+		if(!ModsEnabled[mod])
+			continue;
+		Format(item, sizeof(item), "%d", mod);
+		Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(mod)], client);
 		menu.AddItem(item, buffer);
-	}
-	Format(item, sizeof(item), "%d", GameMod_Default);
-	Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Default)], client);
-	menu.AddItem(item, buffer);
+	}	
 
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
@@ -350,27 +375,14 @@ void DifMenu_ShowToClient(const int client)
 	Menu menu = new Menu(MenuHandler_DifMenu);
 	menu.SetTitle("%T", "DifMenuTitle", client);
 	
-	if (DiffsEnabled.GameDif_Classic){
-		Format(item, sizeof(item), "%d", GameDif_Classic);
-		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Classic)], client);
-		menu.AddItem(item, buffer);
-	}
-		if (DiffsEnabled.GameDif_Casual){
-		Format(item, sizeof(item), "%d", GameDif_Casual);
-		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Casual)], client);
-		menu.AddItem(item, buffer);
-	}
-	if (DiffsEnabled.GameDif_Nightmare){
-		Format(item, sizeof(item), "%d", GameDif_Nightmare);
-		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Nightmare)], client);
+	for ( int gamedif=0; gamedif < sizeof(DifStrings); gamedif++ )	{
+		if(!DifsEnabled[gamedif])
+			continue;
+		Format(item, sizeof(item), "%d", gamedif);
+		Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(gamedif)], client);
 		menu.AddItem(item, buffer);
 	}
 
-	//What's the point of default choice?
-	// Format(item, sizeof(item), "%d", GameDif_Default);
-	// Format(buffer, sizeof(buffer), "%T", sDifItem[view_as<int>(GameDif_Default)], client);
-	// menu.AddItem(item, buffer);
-	
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
 }
@@ -382,18 +394,50 @@ void GetEnabledDiffs()
 	char buff2[3][32];
 	g_cfg_diffs_enabled.GetString(buff, sizeof(buff));
 	int nDiffsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
-
-	//PrintToServer("%s Found %d difficulty modes enabled", PLUGIN_NAME, nDiffsEnabled);
+	
 	for (int i = 0; i < nDiffsEnabled; i++)
 	{
-		if 		(StrEqual("classic", 		buff2[i], false))
-			DiffsEnabled.GameDif_Classic 	= 1;
-		else if (StrEqual("casual", 		buff2[i], false))
-			DiffsEnabled.GameDif_Casual 	= 1;
-		else if (StrEqual("nightmare", 		buff2[i], false))
-			DiffsEnabled.GameDif_Nightmare 	= 1;
+		for ( int n=0; n < sizeof( DifStrings); n++   )
+		{
+			if 	(StrEqual(DifStrings[n], buff2[i], false))
+				DifsEnabled[n] = true;
+		}
 	}
 }
+void GetEnabledMods()
+{
+	char buff[128];
+	char buff2[3][32];
+	g_cfg_mods_enabled.GetString(buff, sizeof(buff));
+	int nModsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+	
+	for (int i = 0; i < nModsEnabled; i++)
+	{
+		for ( int n=0; n < sizeof( ModStrings); n++   )
+		{
+			if 	(StrEqual(ModStrings[n], buff2[i], false))
+				ModsEnabled[n] = true;
+		}
+	}
+}
+
+// void GetEnabledMods()
+// {
+// 	char buff[128];
+// 	char buff2[3][32];
+// 	g_cfg_mods_enabled.GetString(buff, sizeof(buff));
+// 	int nModsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+
+// 	for (int i = 0; i < DifStrings; i++)
+// 	{
+// 		if 		(StrEqual("runner",  buff2[i], false))
+// 			ModsEnabled.Runner  = 1;
+// 		else if (StrEqual("kids", 	 buff2[i], false))
+// 			ModsEnabled.Kids    = 1;
+// 		else if (StrEqual("crawler", buff2[i], false))
+// 			ModsEnabled.Crawler = 1;
+// 	}
+// }
 
 
 public int MenuHandler_DifMenu(Menu menu, MenuAction action, int client, int param2)

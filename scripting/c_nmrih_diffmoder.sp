@@ -57,7 +57,7 @@ GameDif g_eGamediff;
 public Plugin myinfo =
 {
 	name		= PLUGIN_NAME,
-	author		= "Mostten, Rogue Garlicbread",
+	author		= "Mostten, Rogue Garlicbread|Thijs",
 	description	= "Allow player to enable the change difficult and mod by ballot.",
 	version		= "2.3.2",
 	url			= "https://forums.alliedmods.net/showthread.php?t=301322"
@@ -98,7 +98,8 @@ public void OnPluginStart()
 	g_cfg_modeswitch_time	= CreateConVar("nmrih_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
 	g_cfg_modeswitch_cooldown	= CreateConVar("nmrih_diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
 	//
-	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled game difficulties. Difficulties not in this list cannot be diffmoded to.");
+	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled difficulties, those not in this list cannot be selected.");
+	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
 
 	
 
@@ -109,7 +110,8 @@ public void OnPluginStart()
 
 	AutoExecConfig();
 	GetEnabledDiffs();
-	
+	GetEnabledMods();
+
 	//Reg Cmd
 	RegConsoleCmd("sm_dif", Cmd_MenuTop);
 	RegConsoleCmd("sm_difshow", Cmd_InfoShow);

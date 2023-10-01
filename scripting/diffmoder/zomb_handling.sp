@@ -113,7 +113,7 @@ bool IsValidShamblerzombie(int zombie)
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
     
     if ( !StrEqual(sName, "", false)){
-        PrintToServer("Has name, skipping..");
+        // PrintToServer("Has name, skipping..");
         return false;
     }
 
