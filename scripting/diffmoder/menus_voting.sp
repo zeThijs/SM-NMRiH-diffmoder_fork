@@ -8,7 +8,7 @@ char sModItem[][] =
 	"ModMenuItemDefault",
 	"ModMenuItemRunner",
 	"ModMenuItemKid",
-	"Crawler"
+	"ModMenuItemCrawler"
 };
 char sDifItem[][] =
 {
