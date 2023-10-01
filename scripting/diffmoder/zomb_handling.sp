@@ -142,7 +142,7 @@ public void SDKHookCB_ZombieSpawnPost(int zombie)
             ShamblerToRunnerFromPosion(zombie, orgin, false);
             }
 		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true) ; 
-		case GameMod_AnkleBiters: {
+		case GameMod_Crawler: {
             BecomeCrawler(EntIndexToEntRef(zombie));
             DataPack data = CreateDataPack();
             data.WriteCell(zombie);

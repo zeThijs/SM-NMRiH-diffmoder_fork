@@ -188,6 +188,12 @@
 		"chi"			"友伤开关"
 		"ru"			"Дружественный огонь"
 	}
+	"ConfMenuItemGlassCannon"
+	{
+		"en"			"Glass Cannon"
+		"chi"			"玻璃大炮"
+		"ru"			"стеклянная пушка"
+	}
 	"ConfMenuItemHardcore"
 	{
 		"en"			"Hardcore"
@@ -224,9 +230,9 @@
 		"chi"			"全小孩模式"
 		"ru"			"Только дети"
 	}
-	"ModMenuItemAnkleBiters"
+	"ModMenuItemCrawler"
 	{
-		"en"			"AnkleBiters"
+		"en"			"Crawler"
 		"chi"			"咬踝者"
 		"ru"			"Лодыжки"
 	}
@@ -261,7 +267,7 @@
 		"chi"			"{1} 想投票更换全跑模式"
 		"ru"			"{1} запустил голосование за режим 'Только бегуны'"
 	}
-	"ModMenuAnkleBitersVote"
+	"ModMenuCrawlerVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for all crawler hell"

@@ -8,7 +8,7 @@ char	sModItem[][] =
 	"ModMenuItemDefault",
 	"ModMenuItemRunner",
 	"ModMenuItemKid",
-	"ModMenuItemAnkleBiters"
+	"Crawler"
 };
 char	sDifItem[][] =
 {
@@ -39,7 +39,7 @@ char sModVote[][] = {
 	"ModMenuDefVote",
 	"ModMenuRunerVote",
 	"ModMenuKidVote",
-	"ModMenuAnkleBitersVote"
+	"ModMenuCrawlerVote"
 };
 char sDifVote[][] =
 {
@@ -55,7 +55,8 @@ char sDifVote[][] =
 	"ConfMenuFriendlyVote",
 	"ConfMenuHardcoreVote",
 	"ConfMenuInfinityVote",
-	"ConfMenuItemDoubleJump"
+	"ConfMenuItemDoubleJump",
+	"ConfMenuItemGlassCannon"
 },
 	sConfItem[][] =
 {
@@ -64,7 +65,8 @@ char sDifVote[][] =
 	"ConfMenuItemFriendly",
 	"ConfMenuItemHardcore",
 	"ConfMenuItemInfinity",
-	"ConfMenuItemDoubleJump"
+	"ConfMenuItemDoubleJump",
+	"ConfMenuItemGlassCannon"
 };
 
 
@@ -73,7 +75,7 @@ enum GameMod{
 	GameMod_Default,
 	GameMod_Runner,
 	GameMod_Kid,
-	GameMod_AnkleBiters,
+	GameMod_Crawler,
 	GameMod_LaserZombies
 };
 enum GameDif{
@@ -89,7 +91,8 @@ enum GameConf{
 	GameConf_Friendly,
 	GameConf_Hardcore,
 	GameConf_Infinity,
-	GameConf_DoubleJump
+	GameConf_DoubleJump,
+	GameConf_GlassCannon
 };
 
 ConVar sv_max_runner_chance,
@@ -127,20 +130,6 @@ ConVar sv_max_runner_chance,
 bool g_bEnable;
 bool g_bMutator_ZLazerEnabled;	//Zombie lazer mutator is only handled if found to be loaded on map start
 
-
-// enum struct Difficulties{
-//     int   GameDif_Classic;
-//     int   GameDif_Casual;
-//     int   GameDif_Nightmare;
-// }
-// Difficulties DiffsEnabled;
-
-// enum struct Mods{
-//     int   GameDif_Runner;
-//     int   GameDif_Kids;
-//     int   GameDif_Crawler;
-// }
-// Mods ModsEnabled;
 
 
 
@@ -230,21 +219,6 @@ void ModMenu_ShowToClient(const int client)
 	Menu menu = new Menu(MenuHandler_ModMenu);
 	menu.SetTitle("%T", "ModMenuTitle", client);
 	
-	// Format(item, sizeof(item), "%d", GameMod_Runner);
-	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Runner)], client);
-	// menu.AddItem(item, buffer);
-
-	// Format(item, sizeof(item), "%d", GameMod_Kid);
-	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Kid)], client);
-	// menu.AddItem(item, buffer);
-
-	// Format(item, sizeof(item), "%d", GameMod_AnkleBiters);
-	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_AnkleBiters)], client);
-	// menu.AddItem(item, buffer);
-
-	// Format(item, sizeof(item), "%d", GameMod_Default);
-	// Format(buffer, sizeof(buffer), "%T", sModItem[view_as<int>(GameMod_Default)], client);
-	// menu.AddItem(item, buffer);
 	for ( int mod=0; mod < sizeof(ModStrings); mod++ )	{
 		if(!ModsEnabled[mod])
 			continue;
@@ -421,24 +395,6 @@ void GetEnabledMods()
 	}
 }
 
-// void GetEnabledMods()
-// {
-// 	char buff[128];
-// 	char buff2[3][32];
-// 	g_cfg_mods_enabled.GetString(buff, sizeof(buff));
-// 	int nModsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
-
-// 	for (int i = 0; i < DifStrings; i++)
-// 	{
-// 		if 		(StrEqual("runner",  buff2[i], false))
-// 			ModsEnabled.Runner  = 1;
-// 		else if (StrEqual("kids", 	 buff2[i], false))
-// 			ModsEnabled.Kids    = 1;
-// 		else if (StrEqual("crawler", buff2[i], false))
-// 			ModsEnabled.Crawler = 1;
-// 	}
-// }
-
 
 public int MenuHandler_DifMenu(Menu menu, MenuAction action, int client, int param2)
 {
@@ -461,7 +417,6 @@ public int MenuHandler_DifMenu(Menu menu, MenuAction action, int client, int par
 }
 
 
-//Handle t_casualswitch_cooldown = INVALID_HANDLE;
 bool f_casualswitch_cooldown = false;
 int timercount = 0;
 public Action Timer_Casualswitch(Handle timer){

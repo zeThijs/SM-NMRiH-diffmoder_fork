@@ -47,6 +47,7 @@ enum speedflag_enum{
 
 
 
+bool glassCannon = false;
 
 
 Handle g_hDiffMod_Timer;
@@ -91,6 +92,7 @@ public void OnPluginStart()
 	g_cfg_friendly 			= CreateConVar("nmrih_diffmoder_friendly_default", "0", "Friendly fire: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_realism 			= CreateConVar("nmrih_diffmoder_realism_default", "0", "Realism: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_hardcore 			= CreateConVar("nmrih_diffmoder_hardcore_default", "0", "Hardcore survival: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
+
 	g_cfg_difficulty 		= CreateConVar("nmrih_diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
 	g_cfg_casual_cooldown 	= CreateConVar("nmrih_diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finished");
 	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "1200.0", "Time until diffmoder revert to default gamemode.");
@@ -101,7 +103,6 @@ public void OnPluginStart()
 	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled difficulties, those not in this list cannot be selected.");
 	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
 
-	
 
 
 	g_fCrawler_chance_default 		= sv_zombie_shambler_crawler_chance.FloatValue;
@@ -279,9 +280,41 @@ void GameConfig_Enable(GameConf conf, bool on = true)
 		case GameConf_Hardcore:		sv_hardcore_survival.BoolValue = on;
 		case GameConf_Infinity: 	ServerCommand("sm_inf_ammo %d", on);
 		case GameConf_DoubleJump: 	ServerCommand("sm_doublejump_enabled %d", on);
+		case GameConf_GlassCannon:	InitGlassCannon(on);
 		case GameConf_Default:		GameConfig_Def();
 	}
 }
+
+/*
+	Cycle Through players setting their health to 1,
+	Enable Sethealth on player spawn
+*/
+void InitGlassCannon(bool on = true)
+{
+	glassCannon = on;
+	if (glassCannon){
+		for(int i = 1; i <= MaxClients; i++)
+		{
+			if (IsClientInGame(i) && IsPlayerAlive(i))
+			{
+				SetEntityHealth(i, 1);
+			}
+		}}
+}
+
+public Action Event_Spawn(Handle event, char[] name, bool dontBroadcast)
+{
+	if (!glassCannon)
+		return Plugin_Continue;
+		
+	int clientId = GetClientOfUserId(GetEventInt(event, "userid"));
+	if (clientId != 0 && IsClientInGame(clientId) && IsPlayerAlive(clientId))
+	{
+		SetEntityHealth(clientId, 1);
+	}
+	return Plugin_Handled;
+}
+
 
 void GameConfig_Def()
 {
@@ -319,7 +352,7 @@ void GameMod_Enable(GameMod mod)
 			ov_runner_kid_chance.FloatValue = 1.0;
 			phys_pushscale.IntValue = 1;
 		}
-		case GameMod_AnkleBiters:
+		case GameMod_Crawler:
 		{
 			if (g_bMutator_ZLazerEnabled)
 				UnloadMutator();
@@ -350,7 +383,7 @@ void GameMod_Def()
 	{
 		case GameMod_Runner:{GameMod_Enable(GameMod_Runner);}
 		case GameMod_Kid:{GameMod_Enable(GameMod_Kid);}
-		case GameMod_AnkleBiters:{GameMod_Enable(GameMod_AnkleBiters);}
+		case GameMod_Crawler:{GameMod_Enable(GameMod_Crawler);}
 		default:
 		{
 			sv_max_runner_chance.FloatValue = 0.2;
