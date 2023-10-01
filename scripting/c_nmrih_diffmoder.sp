@@ -102,6 +102,9 @@ public void OnPluginStart()
 	//
 	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled difficulties, those not in this list cannot be selected.");
 	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
+	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
+
+
 
 
 
@@ -112,7 +115,8 @@ public void OnPluginStart()
 	AutoExecConfig();
 	GetEnabledDiffs();
 	GetEnabledMods();
-
+	GetEnabledConfigs();
+	
 	//Reg Cmd
 	RegConsoleCmd("sm_dif", Cmd_MenuTop);
 	RegConsoleCmd("sm_difshow", Cmd_InfoShow);

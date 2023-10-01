@@ -3,39 +3,51 @@ static const float	VOTE_LIMIT			= 0.6;
 static const int	MENUDISPLAY_TIME	= 20;
 
 
-char	sModItem[][] =
+char sModItem[][] =
 {
 	"ModMenuItemDefault",
 	"ModMenuItemRunner",
 	"ModMenuItemKid",
 	"Crawler"
 };
-char	sDifItem[][] =
+char sDifItem[][] =
 {
 	"DifMenuItemDefault",
 	"DifMenuItemClassic",
 	"DifMenuItemCasual",
 	"DifMenuItemNightmare"
 };
-char	DifStrings[][] =		//used when parsing diffenabled convar
+char DifStrings[][] =		//used when parsing diffenabled convar
 {
 	"Default",
 	"Classic",
 	"Casual",
 	"Nightmare"
 };
-char	ModStrings[][] =		//used when parsing modenabled convar
+char ModStrings[][] =		//used when parsing modenabled convar
 {
 	"Default",
 	"Runner",
 	"Kid",
 	"Crawler"
 };
+char ConfigsStrings[][] = 
+{
+	"Default",
+	"Realism",
+	"Friendly",
+	"Hardcore",
+	"Infinity",
+	"DoubleJump",
+	"GlassCannon"
+};
 
 bool DifsEnabled[sizeof(DifStrings)];
 bool ModsEnabled[sizeof(ModStrings)];
+bool ConfigsEnabled[sizeof(ConfigsStrings)];
 
-char sModVote[][] = {
+char sModVote[][] = 
+{
 	"ModMenuDefVote",
 	"ModMenuRunerVote",
 	"ModMenuKidVote",
@@ -125,7 +137,8 @@ ConVar sv_max_runner_chance,
 	g_cfg_mapdefault,
 	g_cfg_modeswitch_cooldown,
 	g_cfg_diffs_enabled,
-	g_cfg_mods_enabled;
+	g_cfg_mods_enabled,
+	g_cfg_configs_enabled;
 
 bool g_bEnable;
 bool g_bMutator_ZLazerEnabled;	//Zombie lazer mutator is only handled if found to be loaded on map start
@@ -394,7 +407,21 @@ void GetEnabledMods()
 		}
 	}
 }
-
+void GetEnabledConfigs()
+{
+	char buff[128];
+	char buff2[3][32];
+	g_cfg_configs_enabled.GetString(buff, sizeof(buff));
+	int nConfigsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+	for (int i = 0; i < nConfigsEnabled; i++)
+	{
+		for ( int n=0; n < sizeof( ConfigsStrings); n++   )
+		{
+			if 	(StrEqual(ConfigsStrings[n], buff2[i], false))
+				ConfigsEnabled[n] = true;
+		}
+	}
+}
 
 public int MenuHandler_DifMenu(Menu menu, MenuAction action, int client, int param2)
 {
@@ -515,30 +542,38 @@ void ConfMenu_ShowToClient(const int client)
 	Menu menu = new Menu(MenuHandler_ConfMenu);
 	menu.SetTitle("%T", "ConfMenuTitle", client);
 	
-	Format(item, sizeof(item), "%d", GameConf_Realism);
-	Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Realism)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameConf_Realism);
+	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Realism)], client);
+	// menu.AddItem(item, buffer);
 	
-	Format(item, sizeof(item), "%d", GameConf_Friendly);
-	Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Friendly)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameConf_Friendly);
+	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Friendly)], client);
+	// menu.AddItem(item, buffer);
 	
-	Format(item, sizeof(item), "%d", GameConf_Hardcore);
-	Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Hardcore)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameConf_Hardcore);
+	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Hardcore)], client);
+	// menu.AddItem(item, buffer);
 	
-	Format(item, sizeof(item), "%d", GameConf_Infinity);
-	Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Infinity)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameConf_Infinity);
+	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Infinity)], client);
+	// menu.AddItem(item, buffer);
 
-	Format(item, sizeof(item), "%d", GameConf_DoubleJump);
-	Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_DoubleJump)], client);
-	menu.AddItem(item, buffer);
+	// Format(item, sizeof(item), "%d", GameConf_DoubleJump);
+	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_DoubleJump)], client);
+	// menu.AddItem(item, buffer);
 
-	Format(item, sizeof(item), "%d", GameConf_Default);
-	Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Default)], client);
-	menu.AddItem(item, buffer);
-	
+	// Format(item, sizeof(item), "%d", GameConf_Default);
+	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Default)], client);
+	// menu.AddItem(item, buffer);
+
+	for ( int gameconfig=0; gameconfig < sizeof(ConfigsStrings); gameconfig++ )	{
+		if(!ConfigsEnabled[gameconfig])
+			continue;
+		Format(item, sizeof(item), "%d", gameconfig);
+		Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(gameconfig)], client);
+		menu.AddItem(item, buffer);
+	}
+
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
 }
