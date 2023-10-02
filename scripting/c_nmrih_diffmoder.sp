@@ -125,6 +125,7 @@ public void OnPluginStart()
 	//events
 	HookEvent("nmrih_round_begin", Event_RoundBegin);
 	HookEvent("nmrih_reset_map", Event_Reset_Map);
+	HookEvent("player_spawn", Event_Spawn);
 	//setup vscript proxy
     if(g_bEnable && g_iEnt_VscriptProxy == -1)
         SetupVscriptProxy();
