@@ -84,6 +84,7 @@ public void OnPluginStart()
 	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
 	(phys_pushscale 		= FindConVar("phys_pushscale")).AddChangeHook(OnConVarChanged);
 
+
 	sv_current_diffmode 	= CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
 	g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
 	(g_cfg_diffmoder 		= CreateConVar("nmrih_diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
@@ -104,7 +105,7 @@ public void OnPluginStart()
 	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
 
-
+	PrintToServer("Starting diffmoder..");
 
 
 
@@ -289,22 +290,50 @@ void GameConfig_Enable(GameConf conf, bool on = true)
 	}
 }
 
+
+
+int defaultPlayerHealth;
+
 /*
-	Cycle Through players setting their health to 1,
+	Cycle Through players setting their max and current health to 1
 	Enable Sethealth on player spawn
 */
 void InitGlassCannon(bool on = true)
 {
 	glassCannon = on;
-	if (glassCannon){
-		for(int i = 1; i <= MaxClients; i++)
+
+	for(int client = 1; client <= MaxClients; client++)
+	{
+		if (IsClientInGame(client) && IsPlayerAlive(client))
 		{
-			if (IsClientInGame(i) && IsPlayerAlive(i))
+			if (glassCannon)
 			{
-				SetEntityHealth(i, 1);
+				if (!defaultPlayerHealth)
+					defaultPlayerHealth = GetMaxHealth(client);
+
+				SetEntityHealth(client, 1);
+				SetMaxHealth(client, 1);
 			}
-		}}
+			else
+			{
+				SetMaxHealth(client, defaultPlayerHealth);	
+				defaultPlayerHealth = 0;
+			}
+		}
+	}
 }
+
+
+
+void SetMaxHealth(int entityref, int val){
+	char functionBuffer[128];
+	Format(functionBuffer, sizeof(functionBuffer), "SetMaxHealth(%i)", val);
+	RunEntVScript(entityref, functionBuffer, g_iEnt_VscriptProxy);
+}
+int GetMaxHealth(int entityref){
+    return RunEntVScriptInt(entityref, "GetMaxHealth()", g_iEnt_VscriptProxy);
+}
+
 
 public Action Event_Spawn(Handle event, char[] name, bool dontBroadcast)
 {
@@ -315,6 +344,7 @@ public Action Event_Spawn(Handle event, char[] name, bool dontBroadcast)
 	if (clientId != 0 && IsClientInGame(clientId) && IsPlayerAlive(clientId))
 	{
 		SetEntityHealth(clientId, 1);
+		SetMaxHealth(clientId, 1);
 	}
 	return Plugin_Handled;
 }

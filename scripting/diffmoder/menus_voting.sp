@@ -378,9 +378,9 @@ void DifMenu_ShowToClient(const int client)
 void GetEnabledDiffs()
 {
 	char buff[128];
-	char buff2[3][32];
+	char buff2[16][32];
 	g_cfg_diffs_enabled.GetString(buff, sizeof(buff));
-	int nDiffsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+	int nDiffsEnabled = ExplodeString(buff, " ", buff2, 16, 32, false);
 	
 	for (int i = 0; i < nDiffsEnabled; i++)
 	{
@@ -394,9 +394,9 @@ void GetEnabledDiffs()
 void GetEnabledMods()
 {
 	char buff[128];
-	char buff2[3][32];
+	char buff2[16][32];
 	g_cfg_mods_enabled.GetString(buff, sizeof(buff));
-	int nModsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+	int nModsEnabled = ExplodeString(buff, " ", buff2, 16, 32, false);
 	
 	for (int i = 0; i < nModsEnabled; i++)
 	{
@@ -409,10 +409,10 @@ void GetEnabledMods()
 }
 void GetEnabledConfigs()
 {
-	char buff[128];
-	char buff2[3][32];
+	char buff[256];
+	char buff2[16][32];
 	g_cfg_configs_enabled.GetString(buff, sizeof(buff));
-	int nConfigsEnabled = ExplodeString(buff, " ", buff2, 3, 32, false);
+	int nConfigsEnabled = ExplodeString(buff, " ", buff2, 16, 32, false);
 	for (int i = 0; i < nConfigsEnabled; i++)
 	{
 		for ( int n=0; n < sizeof( ConfigsStrings); n++   )
@@ -541,30 +541,7 @@ void ConfMenu_ShowToClient(const int client)
 	char buffer[128], item[32];
 	Menu menu = new Menu(MenuHandler_ConfMenu);
 	menu.SetTitle("%T", "ConfMenuTitle", client);
-	
-	// Format(item, sizeof(item), "%d", GameConf_Realism);
-	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Realism)], client);
-	// menu.AddItem(item, buffer);
-	
-	// Format(item, sizeof(item), "%d", GameConf_Friendly);
-	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Friendly)], client);
-	// menu.AddItem(item, buffer);
-	
-	// Format(item, sizeof(item), "%d", GameConf_Hardcore);
-	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Hardcore)], client);
-	// menu.AddItem(item, buffer);
-	
-	// Format(item, sizeof(item), "%d", GameConf_Infinity);
-	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Infinity)], client);
-	// menu.AddItem(item, buffer);
 
-	// Format(item, sizeof(item), "%d", GameConf_DoubleJump);
-	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_DoubleJump)], client);
-	// menu.AddItem(item, buffer);
-
-	// Format(item, sizeof(item), "%d", GameConf_Default);
-	// Format(buffer, sizeof(buffer), "%T", sConfItem[view_as<int>(GameConf_Default)], client);
-	// menu.AddItem(item, buffer);
 
 	for ( int gameconfig=0; gameconfig < sizeof(ConfigsStrings); gameconfig++ )	{
 		if(!ConfigsEnabled[gameconfig])
