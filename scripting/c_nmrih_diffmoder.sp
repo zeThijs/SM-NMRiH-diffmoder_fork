@@ -48,8 +48,9 @@ enum speedflag_enum{
 
 
 bool glassCannon = false;
+int first_aid_heal_default = 30;
 
-
+ConVar sv_first_aid_heal_amt;
 Handle g_hDiffMod_Timer;
 
 GameMod g_eGameMode;	//int
@@ -84,6 +85,8 @@ public void OnPluginStart()
 	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
 	(phys_pushscale 		= FindConVar("phys_pushscale")).AddChangeHook(OnConVarChanged);
 
+	sv_first_aid_heal_amt 	= FindConVar("sv_first_aid_heal_amt");
+	first_aid_heal_default 	= GetConVarInt(sv_first_aid_heal_amt);
 
 	sv_current_diffmode 	= CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
 	g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
@@ -302,7 +305,11 @@ int defaultPlayerHealth;
 void InitGlassCannon(bool on = true)
 {
 	glassCannon = on;
+	FixGlassCannonHealths();
+}
 
+void FixGlassCannonHealths()
+{
 	for(int client = 1; client <= MaxClients; client++)
 	{
 		if (IsClientInGame(client) && IsPlayerAlive(client))
@@ -314,16 +321,23 @@ void InitGlassCannon(bool on = true)
 
 				SetEntityHealth(client, 1);
 				SetMaxHealth(client, 1);
+				
 			}
 			else
-			{
-				SetMaxHealth(client, defaultPlayerHealth);	
-				defaultPlayerHealth = 0;
-			}
+				SetMaxHealth(client, defaultPlayerHealth);
 		}
 	}
-}
+	if (!glassCannon){
+		defaultPlayerHealth = 0;
 
+		char charbuff[64];
+		Format(charbuff, sizeof(charbuff), "sv_first_aid_heal_amt %d", first_aid_heal_default);	
+
+		ServerCommand("charbuff");
+		}
+	else
+		ServerCommand("sv_first_aid_heal_amt 0");
+}
 
 
 void SetMaxHealth(int entityref, int val){
