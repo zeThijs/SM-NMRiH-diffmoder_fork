@@ -274,13 +274,6 @@
 		"chi"			"{1} 想投票给所有爬虫地狱"
 		"ru"			"{1} хочу проголосовать за 'весь гусеничный ад'"
 	}
-	"ModMenuLazerZombies"
-	{
-		"#format"		"{1:s}"
-		"en"			"{1} want to vote for lazer zombies"
-		"chi"			"{1} 想投票给 lazer zombies"
-		"ru"			"{1} хочу проголосовать за 'лазерных зомби'"
-	}
 	"ConfMenuRealismVote"
 	{
 		"#format"		"{1:s}"

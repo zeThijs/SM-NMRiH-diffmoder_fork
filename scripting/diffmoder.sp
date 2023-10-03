@@ -20,7 +20,6 @@
 */
 
 
-
 #pragma newdecls required
 #pragma semicolon 1
 
@@ -33,18 +32,13 @@
 #include "diffmoder/menus_voting.sp"
 #include "diffmoder/zomb_handling.sp"
 #include "diffmoder/consts.sp"
+
+float	g_fRunner_chance_default;
+float	g_fRunner_chance_max_default;
 float	g_fCrawler_chance_default;
+float	g_fRunner_kid_chance_default;
 
-int sv_zombie_crawler_health_default;
-
-int speedflag[4]={0,0,0,0};
-enum speedflag_enum{
-	shambler,
-	crawler,
-	runner,
-	kid
-};
-
+int sv_crawler_health_default;
 
 
 bool glassCannon = false;
@@ -61,62 +55,73 @@ public Plugin myinfo =
 	name		= PLUGIN_NAME,
 	author		= "Mostten, Rogue Garlicbread|Thijs",
 	description	= "Allow player to enable the change difficult and mod by ballot.",
-	version		= "2.3.2",
+	version		= "2.4.0",
 	url			= "https://forums.alliedmods.net/showthread.php?t=301322"
 }
 
 public void OnPluginStart()
 {
-
+	AutoExecConfig();
 	zombiespeeds_init();
 
 	LoadTranslations("nmrih.diffmoder.phrases");
 
-	(ov_runner_chance 		= FindConVar("ov_runner_chance")).AddChangeHook(OnConVarChanged);
-	(ov_runner_kid_chance 	= FindConVar("ov_runner_kid_chance")).AddChangeHook(OnConVarChanged);
-	(sv_max_runner_chance 	= FindConVar("sv_max_runner_chance")).AddChangeHook(OnConVarChanged);
-	(sv_zombie_shambler_crawler_chance = FindConVar("sv_zombie_shambler_crawler_chance")).AddChangeHook(OnConVarChanged);
-	(sv_zombie_crawler_health = FindConVar("sv_zombie_crawler_health")).AddChangeHook(OnConVarChanged);
-	(sv_spawn_density 		= FindConVar("sv_spawn_density")).AddChangeHook(OnConVarChanged);
-	(sv_zombie_moan_freq	= FindConVar("sv_zombie_moan_freq")).AddChangeHook(OnConVarChanged);
+	ov_runner_chance 			= FindConVar("ov_runner_chance");
+	ov_runner_kid_chance 		= FindConVar("ov_runner_kid_chance");
+	sv_max_runner_chance 		= FindConVar("sv_max_runner_chance");
+	sv_zombie_crawler_health 	= FindConVar("sv_zombie_crawler_health");
+	g_fShambler_crawler_chance 	= FindConVar("sv_zombie_shambler_crawler_chance");
+
+	g_fRunner_chance_default 	 = ov_runner_chance.FloatValue;
+	g_fRunner_chance_max_default = sv_max_runner_chance.FloatValue;
+	g_fRunner_kid_chance_default = ov_runner_kid_chance.FloatValue;
+	sv_crawler_health_default	 = sv_zombie_crawler_health.IntValue;
+	g_fCrawler_chance_default 	 = g_fShambler_crawler_chance.FloatValue;
+
+	sv_zombie_moan_freq		= FindConVar("sv_zombie_moan_freq");
+
+	phys_pushscale 			= FindConVar("phys_pushscale");
+
 	(sv_realism 			= FindConVar("sv_realism")).AddChangeHook(OnConVarChanged);
-	(sv_hardcore_survival 	= FindConVar("sv_hardcore_survival")).AddChangeHook(OnConVarChanged);
 	(sv_difficulty 			= FindConVar("sv_difficulty")).AddChangeHook(OnConVarChanged);
 	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
-	(phys_pushscale 		= FindConVar("phys_pushscale")).AddChangeHook(OnConVarChanged);
+	(sv_hardcore_survival 	= FindConVar("sv_hardcore_survival")).AddChangeHook(OnConVarChanged);
 
 	sv_first_aid_heal_amt 	= FindConVar("sv_first_aid_heal_amt");
 	first_aid_heal_default 	= GetConVarInt(sv_first_aid_heal_amt);
 
 	sv_current_diffmode 	= CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
 	g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
-	(g_cfg_diffmoder 		= CreateConVar("nmrih_diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
-	g_cfg_infinity 			= CreateConVar("nmrih_diffmoder_infinity_default", "0", "0 Normal ammo/clip, 1 Infinite ammo, 2 Infinite clip.", 0, true, 0.0, true, 1.0);
-	g_cfg_gamemode 			= CreateConVar("nmrih_diffmoder_gamemode_default", "0", "0 - default gamemode, 1 - All runners, 2 - All kids, 3 - Crawlers", 0, true, 0.0, true, 3.0);
-	g_cfg_friendly 			= CreateConVar("nmrih_diffmoder_friendly_default", "0", "Friendly fire: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
-	g_cfg_realism 			= CreateConVar("nmrih_diffmoder_realism_default", "0", "Realism: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
-	g_cfg_hardcore 			= CreateConVar("nmrih_diffmoder_hardcore_default", "0", "Hardcore survival: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
+	(g_cfg_diffmoder 		= CreateConVar("diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
+	g_cfg_infinity 			= CreateConVar("diffmoder_infinity_default", "0", "0 Normal ammo/clip, 1 Infinite ammo, 2 Infinite clip.", 0, true, 0.0, true, 1.0);
+	g_cfg_gamemode 			= CreateConVar("diffmoder_gamemode_default", "0", "0 - default gamemode, 1 - All runners, 2 - All kids, 3 - Crawlers", 0, true, 0.0, true, 3.0);
+	g_cfg_friendly 			= CreateConVar("diffmoder_friendly_default", "0", "Friendly fire: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
+	g_cfg_realism 			= CreateConVar("diffmoder_realism_default", "0", "Realism: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
+	g_cfg_hardcore 			= CreateConVar("diffmoder_hardcore_default", "0", "Hardcore survival: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 
-	g_cfg_difficulty 		= CreateConVar("nmrih_diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
-	g_cfg_casual_cooldown 	= CreateConVar("nmrih_diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finished");
-	g_cfg_autodefault_timer = CreateConVar("nmrih_autodefault_timer", "1200.0", "Time until diffmoder revert to default gamemode.");
-	g_cfg_mapdefault	 	= CreateConVar("nmrih_diffmoder_mapchange_default", "1", "0: off, 1: on. Change the diffmode to default after map change.");
-	g_cfg_modeswitch_time	= CreateConVar("nmrih_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
-	g_cfg_modeswitch_cooldown	= CreateConVar("nmrih_diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
+	g_cfg_difficulty 		= CreateConVar("diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
+	g_cfg_casual_cooldown 	= CreateConVar("diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finished");
+	g_cfg_autodefault_timer = CreateConVar("diffmoder_autodefault_timer", "1200.0", "Time until diffmoder revert to default gamemode.");
+	g_cfg_modeswitch_map	= CreateConVar("diffmoder_mapchange_default", "0", "0: off, 1: on. Change the diffmode to default after map change.");
+	g_cfg_modeswitch_time	= CreateConVar("diffmoder_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
+	g_cfg_modeswitch_cooldown= CreateConVar("diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
 	//
 	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled difficulties, those not in this list cannot be selected.");
 	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
 
+
+	//Init zombiespeeds
+	g_zombie_speeds				= new ArrayList(1,GetMaxEntities());
+	g_crawler_speed				= CreateConVar("sm_crawler_speed", "1.0", "Amount to scale crawlers' movement speed by. E.g. 1.0 means move at normal speed.");
+	g_crawler_speed_plusminus	= CreateConVar("sm_crawler_speed_plusminus", "0.05", "Set the range of random variation in crawlers' movement speed.");
+
 	PrintToServer("Starting diffmoder..");
-
-
-
-	g_fCrawler_chance_default 		= sv_zombie_shambler_crawler_chance.FloatValue;
-	sv_zombie_crawler_health_default= sv_zombie_crawler_health.IntValue;
 	g_bEnable 						= g_cfg_diffmoder.BoolValue;
 
-	AutoExecConfig();
+	// AutoExecConfig();
+	// GameMod_Init();
+
 	GetEnabledDiffs();
 	GetEnabledMods();
 	GetEnabledConfigs();
@@ -130,10 +135,9 @@ public void OnPluginStart()
 	HookEvent("nmrih_reset_map", Event_Reset_Map);
 	HookEvent("player_spawn", Event_Spawn);
 	//setup vscript proxy
-    if(g_bEnable && g_iEnt_VscriptProxy == -1)
+	if (g_bEnable && g_iEnt_VscriptProxy == -1)
         SetupVscriptProxy();
 
-	GameMod_Init();
 	if (g_hDiffMod_Timer != INVALID_HANDLE){
 		delete g_hDiffMod_Timer;
 		g_hDiffMod_Timer = INVALID_HANDLE;
@@ -147,39 +151,22 @@ public void Event_Reset_Map(Event event, const char[] name, bool dontBroadcast){
     if(g_bEnable)
         SetupVscriptProxy();
 }
-public void OnMapStart(){
-	//idk if vscript loads before or after sourcemod and by how much
-	//for now ill just laate load mutatator stuff here
 
-	if (FindConVar("sv_lazed_enabled") != null)
-		g_bMutator_ZLazerEnabled = true;
-	else
-		PrintToServer("Mutator ZombieLazers not loaded, skipping..");
-	//revert to default mode 
-	if (g_cfg_mapdefault.IntValue == 1)
-	{
+public void OnMapStart(){
+	PrintToServer("On map start fired");
+	if (g_cfg_modeswitch_map.IntValue)	//revert to default mode 
 		GameMod_Init();
-	}
-    //create VscriptProxy
-    if(g_bEnable)
+    
+	//add mutator stuff here
+	if(g_bEnable)	//create VscriptProxy
         SetupVscriptProxy();
 }
 
 
 public void OnConVarChanged(ConVar CVar, const char[] oldValue, const char[] newValue)
 {
-	GameMod mod = Game_GetMod();
-	GameDif dif = Game_GetDif();
-	
-	if(CVar == sv_max_runner_chance)		GameMod_Enable(mod);
-	else if(CVar == ov_runner_chance)		GameMod_Enable(mod);
-	else if(CVar == ov_runner_kid_chance)	GameMod_Enable(mod);
-	else if(CVar == sv_zombie_shambler_crawler_chance)	GameMod_Enable(mod);
-	else if(CVar == sv_difficulty){
-		
-		GameDiff_Enable(dif);
-	}
-	else if(CVar == g_cfg_diffmoder)	
+
+	if(CVar == g_cfg_diffmoder)	
 	{
 		g_bEnable = StringToInt(newValue) > 0;
 		if(g_bEnable) HookEvent("nmrih_round_begin", Event_RoundBegin);
@@ -210,23 +197,29 @@ public Action Timertest(Handle timer)
 {
 	PrintToServer("Auto Difficulty Timer completed");
 	int playercount = GetClientCount();
-	if ( playercount > 0 ){
+	if ( playercount > 0 )
+	{
 		PrintToServer("auto_difficulty_default_timer fired but people are on the server; returning without setting default inits");	
 		g_hDiffMod_Timer = INVALID_HANDLE;
-		return;
+		return Plugin_Continue;
 	}
-	ConVars_InitDefault();
-	g_hDiffMod_Timer = INVALID_HANDLE;
+	else
+	{
+		GameMod_Init();
+		g_hDiffMod_Timer = INVALID_HANDLE;
+		return Plugin_Continue;
+	}
 }
+	
 
 //player_join_game event instead of OnClientConnected as clients may 
 //disconnect before actually joining the game.
 public void OnClientConnected()
 {
-	if( g_hDiffMod_Timer != INVALID_HANDLE ){
-		delete g_hDiffMod_Timer;				//stop timer
+	if( g_hDiffMod_Timer != INVALID_HANDLE ){	//stop timer
+		delete g_hDiffMod_Timer;				
 		g_hDiffMod_Timer = INVALID_HANDLE;
-		PrintToServer("Stopped auto_difficulty_default timer.");
+		// PrintToServer("Stopped auto_difficulty_default timer.");
 	}
 }
 //-----------------------------------------
@@ -235,22 +228,19 @@ public void OnClientConnected()
 
 
 void GameMod_Init(){
+	PrintToServer("gamemod init fired");
 	GameMod_Enable(GameMod_Default);
 	GameDiff_Enable(GameDif_Default);
-}
-
-void ConVars_InitDefault(){
-	GameMod_Def();
-	GameDiff_Def();
 	GameConfig_Def();
 }
 
-public void OnConfigsExecuted(){
-	ConVars_InitDefault();
-}
+// public void OnConfigsExecuted(){
+// 	PrintToServer("Onconfigexec");
+// 	GameMod_Init();
+// }
 
 public void OnPluginEnd(){
-	ConVars_InitDefault();
+	GameMod_Init();
 	delete g_hDiffMod_Timer;
 	g_hDiffMod_Timer = INVALID_HANDLE;
 }
@@ -294,6 +284,14 @@ void GameConfig_Enable(GameConf conf, bool on = true)
 	}
 }
 
+void GameConfig_Def()
+{
+	sv_realism.BoolValue = g_cfg_realism.BoolValue;
+	mp_friendlyfire.BoolValue = g_cfg_friendly.BoolValue;
+	sv_hardcore_survival.BoolValue = g_cfg_hardcore.BoolValue;
+	ServerCommand("sm_inf_ammo %d", g_cfg_infinity.IntValue);
+	ServerCommand("sm_doublejump_enabled %d", g_cfg_doublejump.IntValue);
+}
 
 
 int defaultPlayerHealth;
@@ -365,91 +363,52 @@ public Action Event_Spawn(Handle event, char[] name, bool dontBroadcast)
 }
 
 
-void GameConfig_Def()
-{
-	sv_realism.BoolValue = g_cfg_realism.BoolValue;
-	mp_friendlyfire.BoolValue = g_cfg_friendly.BoolValue;
-	sv_hardcore_survival.BoolValue = g_cfg_hardcore.BoolValue;
-	ServerCommand("sm_inf_ammo %d", g_cfg_infinity.IntValue);
-	ServerCommand("sm_doublejump_enabled %d", g_cfg_doublejump.IntValue);
-}
-
-void UnloadMutator()
-{
-	RunEntVScript(g_iEnt_VscriptProxy, "UnloadMutator()", g_iEnt_VscriptProxy);
-}
 
 void GameMod_Enable(GameMod mod)
 {
 	SetConVarInt(sv_current_diffmode, (view_as<int>(mod)));
 	g_eGameMode = mod;
-	switch(mod)
+	switch(g_eGameMode)
 	{
 		case GameMod_Runner:
 		{
-			if (g_bMutator_ZLazerEnabled)
-				UnloadMutator();
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 1.0;
-			ov_runner_kid_chance.FloatValue = 0.0;
-			phys_pushscale.IntValue = 1;
+			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
+			ConVarCrawler(false);
 		}
 		case GameMod_Kid:
 		{
-			if (g_bMutator_ZLazerEnabled)
-				UnloadMutator();
-			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 0.0;
+			ov_runner_chance.FloatValue 	= g_fRunner_chance_default;
+			sv_max_runner_chance.FloatValue = g_fRunner_chance_max_default;
 			ov_runner_kid_chance.FloatValue = 1.0;
-			phys_pushscale.IntValue = 1;
+			ConVarCrawler(false);
 		}
-		case GameMod_Crawler:
-		{
-			if (g_bMutator_ZLazerEnabled)
-				UnloadMutator();
-			sv_max_runner_chance.FloatValue = 0.01;
-			ov_runner_kid_chance.FloatValue = 0.2;
-			sv_zombie_shambler_crawler_chance.FloatValue = CRAWLERCHANCE;
-
-			g_cvar_crawler_speed.IntValue = CRAWLERSPEED;
-
-			sv_zombie_crawler_health.IntValue = CRAWLERHEALTH_ANKLE;
-			phys_pushscale.IntValue = PUSHSCALE_ANKLE;
-			sv_spawn_density.FloatValue = SPAWNDENSITY_ANKLE;
-		}
-		case GameMod_LaserZombies:
-		{
-			//enable lazer zombies with LoadMutator()
-			RunEntVScript(g_iEnt_VscriptProxy, "LoadMutator()", g_iEnt_VscriptProxy);
-		}
-		case GameMod_Default: GameMod_Def();
+		case GameMod_Crawler: ConVarCrawler(true);
+		case GameMod_Default: GameMod_Enable( view_as<GameMod>(g_cfg_gamemode) );
 	}
 }
 
-void GameMod_Def()
-{	
-	SetConVarInt(sv_current_diffmode, (view_as<int>(g_cfg_gamemode.IntValue)));
-	g_eGameMode = view_as<GameMod>(g_cfg_gamemode.IntValue);
-	switch(g_eGameMode)
+
+void ConVarCrawler(bool on)
+{
+	if(on)
 	{
-		case GameMod_Runner:{GameMod_Enable(GameMod_Runner);}
-		case GameMod_Kid:{GameMod_Enable(GameMod_Kid);}
-		case GameMod_Crawler:{GameMod_Enable(GameMod_Crawler);}
-		default:
-		{
-			sv_max_runner_chance.FloatValue = 0.2;
-			ov_runner_chance.FloatValue = 0.075;
-			ov_runner_kid_chance.FloatValue = 0.3;
-			sv_zombie_shambler_crawler_chance.FloatValue = g_fCrawler_chance_default;
-
-			speedflag[crawler]=0;
-			g_cvar_crawler_speed.IntValue=1;
-			sv_zombie_crawler_health.IntValue = sv_zombie_crawler_health_default;
-			phys_pushscale.IntValue=1;
-			sv_spawn_density.FloatValue=1.0;
-			sv_zombie_moan_freq.IntValue=1;
-		}
+		sv_max_runner_chance.FloatValue = 0.01;
+		ov_runner_kid_chance.FloatValue = 0.2;
+		phys_pushscale.IntValue = PUSHSCALE_ANKLE;
+		g_crawler_speed.IntValue = CRAWLERSPEED;
+		sv_zombie_crawler_health.IntValue = CRAWLERHEALTH_ANKLE;
+		g_fShambler_crawler_chance.FloatValue = CRAWLERCHANCE;		
+	}
+	else
+	{
+		phys_pushscale.IntValue=1;
+		sv_zombie_moan_freq.IntValue=1;
+		g_crawler_speed.IntValue=1;
+		sv_zombie_crawler_health.IntValue = sv_crawler_health_default;
+		g_fShambler_crawler_chance.FloatValue = g_fCrawler_chance_default;
 	}
 }
-
 
 
 void GameDiff_Enable(GameDif dif)
@@ -459,19 +418,18 @@ void GameDiff_Enable(GameDif dif)
 	{
 		case GameDif_Classic:	{sv_difficulty.SetString("classic");}
 		case GameDif_Casual:	{sv_difficulty.SetString("casual");}
-		case GameDif_Nightmare:	{
-		sv_difficulty.SetString("nightmare");
-		SetConVarInt(sv_current_diffmode, 2);
+		case GameDif_Nightmare:	
+		{
+			sv_difficulty.SetString("nightmare");
+			SetConVarInt(sv_current_diffmode, 2);
 		}
-		case GameDif_Default:	GameDiff_Def();
+		case GameDif_Default:	
+		{
+			char buff[128];
+			g_cfg_difficulty.GetString(buff, sizeof(buff));
+			sv_difficulty.SetString(buff);
+		}
 	}
-}
-
-void GameDiff_Def()
-{
-	char difficult[32];
-	g_cfg_difficulty.GetString(difficult, sizeof(difficult));
-	sv_difficulty.SetString(difficult);
 }
 
 GameMod Game_GetMod(){

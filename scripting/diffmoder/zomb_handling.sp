@@ -46,16 +46,9 @@ int g_iEnt_VscriptProxy;
 
 ArrayList g_zombie_speeds;
 
-//zombie speeds
-ConVar 	g_cvar_zombie_speeds_enabled, 
- 		g_cvar_crawler_speed,
- 		g_cvar_crawler_speed_plusminus;
- 		// g_cvar_kid_speed,
- 		// g_cvar_kid_speed_plusminus,
- 		// g_cvar_shambler_speed,
- 		// g_cvar_shambler_speed_plusminus,
- 		// g_cvar_runner_speed,
- 		// g_cvar_runner_speed_plusminus;
+ConVar 	g_zombie_speeds_enabled, 
+ 		g_crawler_speed,
+ 		g_crawler_speed_plusminus;
 
 Handle g_dhook_change_zombie_ground_speed;
 Handle g_dhook_change_zombie_playback_speed;
@@ -103,9 +96,7 @@ void BecomeRunner(int entityref){
 
 bool IsValidShamblerzombie(int zombie)
 {
-    if ((zombie <= MaxClients))
-        return false;
-	if( !IsValidEntity(zombie) ) 
+    if((zombie <= MaxClients) || !IsValidEntity(zombie))
         return false;
 
     //Fix bosses being tranformed: targetname check
@@ -118,10 +109,10 @@ bool IsValidShamblerzombie(int zombie)
     }
 
     //classname check broke, something is fucky, accidental whitespace?
-	decl String:classname[8];   //purposely omit trailing classname substring
-	GetEntityClassname(zombie, classname, sizeof(classname));
+    char classname[8];   //purposely omit trailing classname substring
+    GetEntityClassname(zombie, classname, sizeof(classname));
 
-	return StrEqual(classname, "npc_nmrih_shambler", false);
+    return StrEqual(classname, "npc_nmrih_shambler", false);
 }
 
 //transform shamblers to specials, and -not implemented yet- crawlers
@@ -137,11 +128,11 @@ public void SDKHookCB_ZombieSpawnPost(int zombie)
 
 	switch(Game_GetMod())	{
 		case GameMod_Runner:		
-            {
+        {
             //BecomeRunner(EntIndexToEntRef(zombie))          ; //disabling as this mod works TOO well: too many runners spawn for players
             ShamblerToRunnerFromPosion(zombie, orgin, false);
-            }
-		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true) ; 
+        }
+		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true); 
 		case GameMod_Crawler: {
             BecomeCrawler(EntIndexToEntRef(zombie));
             DataPack data = CreateDataPack();
@@ -157,15 +148,13 @@ public void CB_CrawlerSpeed(DataPack data)
 {
     data.Reset();
     int zombie = EntRefToEntIndex(data.ReadCell());
-    if (zombie<1 /*&& !IsValidShamblerzombie(zombie)*/ ){          //is zombie still alive?     -- TODO isvalidzombie needed? -> there aleady is a reference check..
+    if ( zombie < 1 /*&& !IsValidShamblerzombie(zombie)*/ ){          //is zombie still alive?     -- TODO isvalidzombie needed? -> there aleady is a reference check..
         return;
     }
-    //PrintToServer("Hello, I am crawler");
-    DHookEntity(g_dhook_change_zombie_ground_speed, true, zombie);
-    DHookEntity(g_dhook_change_zombie_playback_speed, true, zombie);
-    g_zombie_speeds.Set(zombie, RandomSpeedScalar(g_cvar_crawler_speed, g_cvar_crawler_speed_plusminus));
-}
 
+    DHookZombie(zombie);
+    g_zombie_speeds.Set( zombie, RandomSpeedScalar(g_crawler_speed, g_crawler_speed_plusminus) );
+}
 
 void Game_ShamblerToRunner(const GameMod mod)
 {
@@ -204,23 +193,10 @@ int ShamblerToRunnerFromPosion(int shamblerrunner, float pos[3], bool isKid = fa
 
 
 
-
-
-
-
 /*
     setup zombie speeds
 */
 void zombiespeeds_init(){    
-	g_zombie_speeds = new ArrayList(1, GetMaxEntities());
-
-    g_cvar_zombie_speeds_enabled = CreateConVar("sm_zombie_speeds_enabled", "1", "1 = Enable plugin. 0 = Disable plugin.");
-
-    g_cvar_crawler_speed = CreateConVar("sm_crawler_speed", "1.0",
-        "Amount to scale crawlers' movement speed by. E.g. 1.0 means move at normal speed.");
-
-    g_cvar_crawler_speed_plusminus = CreateConVar("sm_crawler_speed_plusminus", "0.05",
-        "Set the range of random variation in crawlers' movement speed.");
 
     // Game data is necesary for our DHooks.
     Handle gameconf = LoadGameConfigFile("zombiespeeds.games");
@@ -253,8 +229,7 @@ void zombiespeeds_init(){
 
     g_dhook_change_zombie_playback_speed = DHookCreate(offset, HookType_Entity, ReturnType_Int, ThisPointer_CBaseEntity, DHook_ChangeZombiePlaybackSpeed);
     DHookAddParam(g_dhook_change_zombie_playback_speed, HookParamType_Int); // Activity
-
-    AutoExecConfig(true);
+    
 }
 
 
@@ -272,7 +247,7 @@ public MRESReturn DHook_ChangeZombieGroundSpeed(int zombie, Handle return_handle
 {
     MRESReturn result = MRES_Ignored;
 
-    if (g_cvar_zombie_speeds_enabled.BoolValue)
+    if (g_zombie_speeds_enabled.BoolValue)
     {
         int sequence = DHookGetParam(params, 2);
         char sequence_name[32];
@@ -292,7 +267,7 @@ public MRESReturn DHook_ChangeZombieGroundSpeed(int zombie, Handle return_handle
 
 public MRESReturn DHook_ChangeZombiePlaybackSpeed(int zombie, Handle return_handle, Handle params)
 {
-    if (g_cvar_zombie_speeds_enabled.BoolValue)
+    if (g_zombie_speeds_enabled.BoolValue)
     {
         SetEntPropFloat(zombie, Prop_Data, "m_flPlaybackRate", g_zombie_speeds.Get(zombie));
     }
@@ -332,13 +307,6 @@ bool IsMoveSequence(const char[] name)
         StrEqual(name, CRAWLER_CRAWL_WINDOWS);
 }
 
-// /**
-//  * Check if a shambler is also a crawler.
-//  */
-// bool IsCrawler(int shamblerdef)
-// {
-//     return GetEntData(shamblerdef, g_offset_is_crawler, 1) != 0;
-// }
 
 
 /**

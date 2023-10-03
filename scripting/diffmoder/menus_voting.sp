@@ -87,8 +87,7 @@ enum GameMod{
 	GameMod_Default,
 	GameMod_Runner,
 	GameMod_Kid,
-	GameMod_Crawler,
-	GameMod_LaserZombies
+	GameMod_Crawler
 };
 enum GameDif{
 	GameDif_Default,
@@ -107,20 +106,15 @@ enum GameConf{
 	GameConf_GlassCannon
 };
 
-ConVar sv_max_runner_chance,
-	sv_zombie_shambler_crawler_chance,
-	ov_runner_chance,
+ConVar sv_max_runner_chance, ov_runner_chance,	
 	ov_runner_kid_chance,
-	sv_realism, mp_friendlyfire,
-	sv_hardcore_survival,
-	sv_difficulty,
-
+	g_fShambler_crawler_chance,
+	sv_realism, sv_hardcore_survival, sv_difficulty,
 	sv_zombie_crawler_health,
-
-	phys_pushscale,
-	sv_spawn_density,
 	sv_zombie_moan_freq,
 	sv_current_diffmode,
+	phys_pushscale,	mp_friendlyfire,
+
 	g_cfg_diffmoder,
 	g_cfg_infinity,
 	g_cfg_gamemode,
@@ -129,19 +123,19 @@ ConVar sv_max_runner_chance,
 	g_cfg_hardcore,
 	g_cfg_difficulty,
 	g_cfg_doublejump,
-	g_cfg_lazerzombies,
-
 	g_cfg_casual_cooldown,
 	g_cfg_autodefault_timer,
 	g_cfg_modeswitch_time,
-	g_cfg_mapdefault,
+	g_cfg_modeswitch_map,
 	g_cfg_modeswitch_cooldown,
+	//game config ConVars
+
 	g_cfg_diffs_enabled,
 	g_cfg_mods_enabled,
 	g_cfg_configs_enabled;
 
+
 bool g_bEnable;
-bool g_bMutator_ZLazerEnabled;	//Zombie lazer mutator is only handled if found to be loaded on map start
 
 
 
@@ -161,9 +155,13 @@ bool IsValidClient(int client)
 
 void GameInfo_ShowToClient(const int client)
 {
+	//move to variable for debug reason
+	int moditem = view_as<int>(Game_GetMod());
+	int difitem = view_as<int>(Game_GetDif());
+
 	PrintToChat(client, "\x04%T \x01%T \x04%T \x01%T\n\x04%T \x01%T \x04%T \x01%T\n\x04%T \x01%T",
-		"ModFlag", client,		sModItem[view_as<int>(Game_GetMod())], client,
-		"DifFlag", client,		sDifItem[view_as<int>(Game_GetDif())], client,
+		"ModFlag", client,		sModItem[moditem], client,
+		"DifFlag", client,		sDifItem[difitem], client,
 		"RealismFlag", client,	sv_realism.BoolValue ? "On" : "Off", client,
 		"HardcoreFlag", client,	sv_hardcore_survival.BoolValue ? "On" : "Off", client,
 		"FriendlyFlag", client,	mp_friendlyfire.BoolValue ? "On" : "Off", client);
@@ -271,7 +269,7 @@ bool TestVoteDelay(int client)
 	int delay = CheckVoteDelay();
 	if(!delay) return true;
 
-	if (delay > g_cfg_modeswitch_cooldown.IntValue) PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelayMinutes", client, RoundToNearest(delay / g_cfg_modeswitch_cooldown.IntValue));
+	if (delay > g_cfg_modeswitch_cooldown.FloatValue) PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelayMinutes", client, RoundToNearest(delay / g_cfg_modeswitch_cooldown.FloatValue));
 	else PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelaySeconds", client, delay);
 	return false;
 }
