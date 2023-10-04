@@ -38,13 +38,20 @@ float	g_fRunner_chance_max_default;
 float	g_fCrawler_chance_default;
 float	g_fRunner_kid_chance_default;
 
-int sv_crawler_health_default;
+int 	sv_crawler_health_default;
+float 	g_fSpawn_regen_target_default = 0.6;
+
+
 
 
 bool glassCannon = false;
-int first_aid_heal_default = 30;
+float first_aid_heal_default = 30.0;
+float g_fHealth_station_heal_default = 1.0;
 
 ConVar sv_first_aid_heal_amt;
+ConVar sv_health_station_heal_per_tick;
+ConVar sv_spawn_regen_target;
+
 Handle g_hDiffMod_Timer;
 
 GameMod g_eGameMode;	//int
@@ -66,29 +73,38 @@ public void OnPluginStart()
 
 	LoadTranslations("nmrih.diffmoder.phrases");
 
+	//npc spawn rates
 	ov_runner_chance 			= FindConVar("ov_runner_chance");
 	ov_runner_kid_chance 		= FindConVar("ov_runner_kid_chance");
 	sv_max_runner_chance 		= FindConVar("sv_max_runner_chance");
 	sv_zombie_crawler_health 	= FindConVar("sv_zombie_crawler_health");
 	g_fShambler_crawler_chance 	= FindConVar("sv_zombie_shambler_crawler_chance");
 
+	//Get Defaults
 	g_fRunner_chance_default 	 = ov_runner_chance.FloatValue;
 	g_fRunner_chance_max_default = sv_max_runner_chance.FloatValue;
 	g_fRunner_kid_chance_default = ov_runner_kid_chance.FloatValue;
 	sv_crawler_health_default	 = sv_zombie_crawler_health.IntValue;
 	g_fCrawler_chance_default 	 = g_fShambler_crawler_chance.FloatValue;
 
-	sv_zombie_moan_freq		= FindConVar("sv_zombie_moan_freq");
+	sv_spawn_regen_target 			= FindConVar("sv_spawn_regen_target");
+	g_fSpawn_regen_target_default 	= GetConVarFloat(sv_spawn_regen_target);
 
+	sv_zombie_moan_freq		= FindConVar("sv_zombie_moan_freq");
 	phys_pushscale 			= FindConVar("phys_pushscale");
 
-	(sv_realism 			= FindConVar("sv_realism")).AddChangeHook(OnConVarChanged);
-	(sv_difficulty 			= FindConVar("sv_difficulty")).AddChangeHook(OnConVarChanged);
-	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
-	(sv_hardcore_survival 	= FindConVar("sv_hardcore_survival")).AddChangeHook(OnConVarChanged);
+	sv_realism 				= FindConVar("sv_realism");
+	sv_difficulty 			= FindConVar("sv_difficulty");
+	mp_friendlyfire 		= FindConVar("mp_friendlyfire");
+	sv_hardcore_survival 	= FindConVar("sv_hardcore_survival");
 
+
+	//glass cannon related cvars and defaults
 	sv_first_aid_heal_amt 	= FindConVar("sv_first_aid_heal_amt");
-	first_aid_heal_default 	= GetConVarInt(sv_first_aid_heal_amt);
+	first_aid_heal_default 	= GetConVarFloat(sv_first_aid_heal_amt);
+	sv_health_station_heal_per_tick = FindConVar("sv_health_station_heal_per_tick");
+	g_fHealth_station_heal_default 	= GetConVarFloat(sv_health_station_heal_per_tick);
+
 
 	sv_current_diffmode 	= CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
 	g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
@@ -325,16 +341,20 @@ void FixGlassCannonHealths()
 				SetMaxHealth(client, defaultPlayerHealth);
 		}
 	}
-	if (!glassCannon){
-		defaultPlayerHealth = 0;
-
-		char charbuff[64];
-		Format(charbuff, sizeof(charbuff), "sv_first_aid_heal_amt %d", first_aid_heal_default);	
-
-		ServerCommand("charbuff");
-		}
+	//ConVars
+	if (glassCannon)
+	{
+		sv_first_aid_heal_amt.FloatValue 			= 0.0;
+		sv_health_station_heal_per_tick.FloatValue 	= 0.0;
+		sv_spawn_regen_target.FloatValue 			= 0.0;			
+	}
 	else
-		ServerCommand("sv_first_aid_heal_amt 0");
+	{
+		defaultPlayerHealth = 0;
+		sv_first_aid_heal_amt.FloatValue 			= first_aid_heal_default;
+		sv_health_station_heal_per_tick.FloatValue 	= g_fHealth_station_heal_default;
+		sv_spawn_regen_target.FloatValue 			= g_fSpawn_regen_target_default;		
+	}
 }
 
 
@@ -399,6 +419,7 @@ void ConVarCrawler(bool on)
 		g_crawler_speed.IntValue = CRAWLERSPEED;
 		sv_zombie_crawler_health.IntValue = CRAWLERHEALTH_ANKLE;
 		g_fShambler_crawler_chance.FloatValue = CRAWLERCHANCE;		
+		sv_zombie_moan_freq.IntValue=3;
 	}
 	else
 	{
