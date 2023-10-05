@@ -44,25 +44,27 @@ float 	g_fSpawn_regen_target_default = 0.6;
 
 
 
-bool glassCannon = false;
-float first_aid_heal_default = 30.0;
-float g_fHealth_station_heal_default = 1.0;
+bool    glassCannon = false;
+float   first_aid_heal_default = 30.0;
+float 	g_fHealth_station_heal_default = 1.0;
 
-ConVar sv_first_aid_heal_amt;
-ConVar sv_health_station_heal_per_tick;
-ConVar sv_spawn_regen_target;
+ConVar  sv_first_aid_heal_amt;
+ConVar  sv_health_station_heal_per_tick;
+ConVar  sv_spawn_regen_target;
 
-Handle g_hDiffMod_Timer;
+Handle 	g_hDiffMod_Timer;
 
-GameMod g_eGameMode;	//int
-GameDif g_eGamediff;	
+GameMod	g_eGameMode;	//int
+GameDif g_eGameDiff;
+
+int 	g_eGameCFG[sizeof(sConfItem)];	//array of individual conf items enabled or not
 
 public Plugin myinfo =
 {
 	name		= PLUGIN_NAME,
 	author		= "Mostten, Rogue Garlicbread|Thijs",
 	description	= "Allow player to enable the change difficult and mod by ballot.",
-	version		= "2.4.0",
+	version		= "2.4.1",
 	url			= "https://forums.alliedmods.net/showthread.php?t=301322"
 }
 
@@ -95,7 +97,7 @@ public void OnPluginStart()
 
 	sv_realism 				= FindConVar("sv_realism");
 	sv_difficulty 			= FindConVar("sv_difficulty");
-	mp_friendlyfire 		= FindConVar("mp_friendlyfire");
+	(mp_friendlyfire 		= FindConVar("mp_friendlyfire")).AddChangeHook(OnConVarChanged);
 	sv_hardcore_survival 	= FindConVar("sv_hardcore_survival");
 
 
@@ -105,23 +107,21 @@ public void OnPluginStart()
 	sv_health_station_heal_per_tick = FindConVar("sv_health_station_heal_per_tick");
 	g_fHealth_station_heal_default 	= GetConVarFloat(sv_health_station_heal_per_tick);
 
-
-	sv_current_diffmode 	= CreateConVar("sv_current_diffmode", "0", "Current diffmode.");
-	g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
+	(g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
 	(g_cfg_diffmoder 		= CreateConVar("diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
 	g_cfg_infinity 			= CreateConVar("diffmoder_infinity_default", "0", "0 Normal ammo/clip, 1 Infinite ammo, 2 Infinite clip.", 0, true, 0.0, true, 1.0);
-	g_cfg_gamemode 			= CreateConVar("diffmoder_gamemode_default", "0", "0 - default gamemode, 1 - All runners, 2 - All kids, 3 - Crawlers", 0, true, 0.0, true, 3.0);
+	g_cfg_gamemode 			= CreateConVar("diffmoder_gamemode_default", "0", "0 No gamemod, 1 Runners, 2 - All kids, 3 - Crawlers", 0, true, 0.0, true, 3.0);
 	g_cfg_friendly 			= CreateConVar("diffmoder_friendly_default", "0", "Friendly fire: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_realism 			= CreateConVar("diffmoder_realism_default", "0", "Realism: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
 	g_cfg_hardcore 			= CreateConVar("diffmoder_hardcore_default", "0", "Hardcore survival: 0 - off, 1 - on", 0, true, 0.0, true, 1.0);
+	g_cfg_glasscannon 		= CreateConVar("diffmoder_glasscannon_default", "0", "0 - off, 1 on", 0, true, 0.0, true, 1.0);
 
 	g_cfg_difficulty 		= CreateConVar("diffmoder_difficulty_default", "classic", "Difficulty: classic, casual, nightmare");
 	g_cfg_casual_cooldown 	= CreateConVar("diffmoder_casual_cooldown", "300", "Casual switch refractory period. Locks untill cooldown finished");
 	g_cfg_autodefault_timer = CreateConVar("diffmoder_autodefault_timer", "1200.0", "Time until diffmoder revert to default gamemode.");
 	g_cfg_modeswitch_map	= CreateConVar("diffmoder_mapchange_default", "0", "0: off, 1: on. Change the diffmode to default after map change.");
 	g_cfg_modeswitch_time	= CreateConVar("diffmoder_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
-	g_cfg_modeswitch_cooldown= CreateConVar("diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
-	//
+	g_cfg_switch_cooldown	= CreateConVar("diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
 	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled difficulties, those not in this list cannot be selected.");
 	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
@@ -135,18 +135,16 @@ public void OnPluginStart()
 	PrintToServer("Starting diffmoder..");
 	g_bEnable 						= g_cfg_diffmoder.BoolValue;
 
-	// AutoExecConfig();
-	// GameMod_Init();
 
 	GetEnabledDiffs();
 	GetEnabledMods();
 	GetEnabledConfigs();
 	
-	//Reg Cmd
+	//Register Commands
 	RegConsoleCmd("sm_dif", Cmd_MenuTop);
 	RegConsoleCmd("sm_difshow", Cmd_InfoShow);
 
-	//events
+	//Events
 	HookEvent("nmrih_round_begin", Event_RoundBegin);
 	HookEvent("nmrih_reset_map", Event_Reset_Map);
 	HookEvent("player_spawn", Event_Spawn);
@@ -160,6 +158,33 @@ public void OnPluginStart()
 	}
 }
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	CreateNative("Diffmoder_GetMod", Native_GetMod);
+	CreateNative("Diffmoder_GetDif", Native_GetDif);
+	CreateNative("Diffmoder_GetGameCFG", Native_GetGameCFG);
+	return APLRes_Success;
+}
+
+
+
+/*
+    Natives returning current diffmoder status
+    Useful for stat plugins
+*/
+public int Native_GetMod(Handle Plugin, int numParams)
+{
+    return view_as<int>(Game_GetMod());	//Cannot return custom types, cast into int
+}
+public int Native_GetDif(Handle Plugin, int numParams)
+{
+    return view_as<int>(Game_GetDif());
+}
+public int Native_GetGameCFG(Handle Plugin, int numParams)
+{
+	int item = GetNativeCell(1);
+	return view_as<int>(Game_GetCFG(item));
+}
 
 
 public void Event_Reset_Map(Event event, const char[] name, bool dontBroadcast){
@@ -169,7 +194,6 @@ public void Event_Reset_Map(Event event, const char[] name, bool dontBroadcast){
 }
 
 public void OnMapStart(){
-	PrintToServer("On map start fired");
 	if (g_cfg_modeswitch_map.IntValue)	//revert to default mode 
 		GameMod_Init();
     
@@ -188,6 +212,15 @@ public void OnConVarChanged(ConVar CVar, const char[] oldValue, const char[] new
 		if(g_bEnable) HookEvent("nmrih_round_begin", Event_RoundBegin);
 		else UnhookEvent("nmrih_round_begin", Event_RoundBegin);
 	}
+	else if (CVar == mp_friendlyfire)
+	{
+		g_eGameCFG[GameConf_Friendly] = mp_friendlyfire.IntValue;
+	}
+	else if (CVar == g_cfg_doublejump)
+	{
+		g_eGameCFG[GameConf_DoubleJump] = g_cfg_doublejump.IntValue;
+	}
+	
 }
 
 
@@ -235,7 +268,6 @@ public void OnClientConnected()
 	if( g_hDiffMod_Timer != INVALID_HANDLE ){	//stop timer
 		delete g_hDiffMod_Timer;				
 		g_hDiffMod_Timer = INVALID_HANDLE;
-		// PrintToServer("Stopped auto_difficulty_default timer.");
 	}
 }
 //-----------------------------------------
@@ -244,16 +276,10 @@ public void OnClientConnected()
 
 
 void GameMod_Init(){
-	PrintToServer("gamemod init fired");
-	GameMod_Enable(GameMod_Default);
-	GameDiff_Enable(GameDif_Default);
+	GameMod_Enable(view_as<GameMod>(g_cfg_gamemode.IntValue));
+	GameDiff_Enable(view_as<GameDif>(g_cfg_difficulty.IntValue));
 	GameConfig_Def();
 }
-
-// public void OnConfigsExecuted(){
-// 	PrintToServer("Onconfigexec");
-// 	GameMod_Init();
-// }
 
 public void OnPluginEnd(){
 	GameMod_Init();
@@ -288,13 +314,14 @@ public void Event_RoundBegin(Event event, const char[] name, bool dontBroadcast)
 
 void GameConfig_Enable(GameConf conf, bool on = true)
 {
+	g_eGameCFG[conf] = on?1:0;
 	switch(conf)
 	{
 		case GameConf_Realism:		sv_realism.BoolValue = on;
 		case GameConf_Friendly:		mp_friendlyfire.BoolValue = on;
 		case GameConf_Hardcore:		sv_hardcore_survival.BoolValue = on;
-		case GameConf_Infinity: 	ServerCommand("sm_inf_ammo %d", on);
-		case GameConf_DoubleJump: 	ServerCommand("sm_doublejump_enabled %d", on);
+		case GameConf_Infinity: 	ServerCommand("sm_inf_ammo %d", (on?1:0) );
+		case GameConf_DoubleJump: 	g_cfg_doublejump.IntValue = on;
 		case GameConf_GlassCannon:	InitGlassCannon(on);
 		case GameConf_Default:		GameConfig_Def();
 	}
@@ -302,11 +329,12 @@ void GameConfig_Enable(GameConf conf, bool on = true)
 
 void GameConfig_Def()
 {
-	sv_realism.BoolValue = g_cfg_realism.BoolValue;
-	mp_friendlyfire.BoolValue = g_cfg_friendly.BoolValue;
-	sv_hardcore_survival.BoolValue = g_cfg_hardcore.BoolValue;
-	ServerCommand("sm_inf_ammo %d", g_cfg_infinity.IntValue);
-	ServerCommand("sm_doublejump_enabled %d", g_cfg_doublejump.IntValue);
+	GameConfig_Enable(GameConf_Realism, g_cfg_realism.IntValue?true:false);
+	GameConfig_Enable(GameConf_Hardcore, g_cfg_hardcore.IntValue?true:false);
+	GameConfig_Enable(GameConf_Infinity, g_cfg_infinity.IntValue?true:false);
+	GameConfig_Enable(GameConf_Friendly, g_cfg_friendly.IntValue?true:false);
+	GameConfig_Enable(GameConf_DoubleJump, g_cfg_doublejump.IntValue?true:false); //sets double jump twice but eh whatever and i want to save the config
+	GameConfig_Enable(GameConf_GlassCannon, g_cfg_glasscannon.IntValue?true:false);
 }
 
 
@@ -386,8 +414,10 @@ public Action Event_Spawn(Handle event, char[] name, bool dontBroadcast)
 
 void GameMod_Enable(GameMod mod)
 {
-	SetConVarInt(sv_current_diffmode, (view_as<int>(mod)));
+	//save info
 	g_eGameMode = mod;
+	
+	//set mode
 	switch(g_eGameMode)
 	{
 		case GameMod_Runner:
@@ -404,7 +434,13 @@ void GameMod_Enable(GameMod mod)
 			ConVarCrawler(false);
 		}
 		case GameMod_Crawler: ConVarCrawler(true);
-		case GameMod_Default: GameMod_Enable( view_as<GameMod>(g_cfg_gamemode) );
+		case GameMod_NoMod:
+		{
+			ov_runner_chance.FloatValue 	= g_fRunner_chance_default;
+			sv_max_runner_chance.FloatValue = g_fRunner_chance_max_default;
+			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
+			ConVarCrawler(false);
+		}
 	}
 }
 
@@ -434,7 +470,10 @@ void ConVarCrawler(bool on)
 
 void GameDiff_Enable(GameDif dif)
 {	
-	g_eGamediff = dif;
+	if (!g_eGameDiff)	//if default gamemod, save def gamemod's value instead of 0
+		g_eGameDiff = view_as<GameDif>(g_cfg_difficulty.IntValue);
+	else	
+		g_eGameDiff = dif;
 	switch(dif)
 	{
 		case GameDif_Classic:	{sv_difficulty.SetString("classic");}
@@ -458,7 +497,13 @@ GameMod Game_GetMod(){
 }
 
 GameDif Game_GetDif(){
-	return g_eGamediff;
+	return g_eGameDiff;
+}
+
+int Game_GetCFG(int index){
+	if ( index < 0 || index>=sizeof(sConfItem) )
+		return -1;
+	return g_eGameCFG[index];
 }
 
 public Action Cmd_InfoShow(int client, int args)

@@ -84,7 +84,7 @@ char sDifVote[][] =
 
 
 enum GameMod{
-	GameMod_Default,
+	GameMod_NoMod,
 	GameMod_Runner,
 	GameMod_Kid,
 	GameMod_Crawler
@@ -103,7 +103,8 @@ enum GameConf{
 	GameConf_Hardcore,
 	GameConf_Infinity,
 	GameConf_DoubleJump,
-	GameConf_GlassCannon
+	GameConf_GlassCannon,
+	GameConf_INVALID		//invalid or error entry, keep last!!
 };
 
 ConVar sv_max_runner_chance, ov_runner_chance,	
@@ -121,13 +122,14 @@ ConVar sv_max_runner_chance, ov_runner_chance,
 	g_cfg_friendly,
 	g_cfg_realism,
 	g_cfg_hardcore,
+	g_cfg_glasscannon,
 	g_cfg_difficulty,
 	g_cfg_doublejump,
 	g_cfg_casual_cooldown,
 	g_cfg_autodefault_timer,
 	g_cfg_modeswitch_time,
 	g_cfg_modeswitch_map,
-	g_cfg_modeswitch_cooldown,
+	g_cfg_switch_cooldown,
 	//game config ConVars
 
 	g_cfg_diffs_enabled,
@@ -269,7 +271,7 @@ bool TestVoteDelay(int client)
 	int delay = CheckVoteDelay();
 	if(!delay) return true;
 
-	if (delay > g_cfg_modeswitch_cooldown.FloatValue) PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelayMinutes", client, RoundToNearest(delay / g_cfg_modeswitch_cooldown.FloatValue));
+	if (delay > g_cfg_switch_cooldown.FloatValue) PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelayMinutes", client, RoundToNearest(delay / g_cfg_switch_cooldown.FloatValue));
 	else PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteDelaySeconds", client, delay);
 	return false;
 }
