@@ -51,6 +51,7 @@ float 	g_fHealth_station_heal_default = 1.0;
 ConVar  sv_first_aid_heal_amt;
 ConVar  sv_health_station_heal_per_tick;
 ConVar  sv_spawn_regen_target;
+ConVar  sv_challenge;
 
 Handle 	g_hDiffMod_Timer;
 
@@ -107,6 +108,8 @@ public void OnPluginStart()
 	sv_health_station_heal_per_tick = FindConVar("sv_health_station_heal_per_tick");
 	g_fHealth_station_heal_default 	= GetConVarFloat(sv_health_station_heal_per_tick);
 
+	sv_challenge = FindConVar("sv_challenge");
+
 	(g_cfg_doublejump 		= CreateConVar("g_cfg_doublejump_enabled", "0", "Double Jump: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
 	(g_cfg_diffmoder 		= CreateConVar("diffmoder", "1", "Enable/Disable plugin.", FCVAR_NOTIFY, true, 0.0, true, 1.0)).AddChangeHook(OnConVarChanged);
 	g_cfg_infinity 			= CreateConVar("diffmoder_infinity_default", "0", "0 Normal ammo/clip, 1 Infinite ammo, 2 Infinite clip.", 0, true, 0.0, true, 1.0);
@@ -122,8 +125,8 @@ public void OnPluginStart()
 	g_cfg_modeswitch_map	= CreateConVar("diffmoder_mapchange_default", "0", "0: off, 1: on. Change the diffmode to default after map change.");
 	g_cfg_modeswitch_time	= CreateConVar("diffmoder_modeswitch_time", "0", "-1: Never allow - 0:Always allow >1 - Time after roundstart during which people are allowed to change game settings.");	//not implemented atm
 	g_cfg_switch_cooldown	= CreateConVar("diffmoder_modeswitch_cooldown", "60", "Delay after a vote before another may be started again.");
-	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare", "Enabled difficulties, those not in this list cannot be selected.");
-	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler", "Enabled mods, those not in this list cannot be selected.");
+	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare default", "Enabled difficulties, those not in this list cannot be selected.");
+	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler default", "Enabled mods, those not in this list cannot be selected.");
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
 
 
@@ -288,14 +291,11 @@ public void OnPluginEnd(){
 }
 
 
-public void OnEntityCreated(int entity, const char[] classname)
+public void OnEntityCreated_Post(int entity, const char[] classname)
 {
-	if(!g_bEnable) return;
+	if(!g_bEnable || !( entity > MaxClients) ) return;
 
-	if((entity > MaxClients) && IsValidEntity(entity)
-	&& StrEqual(classname, "npc_nmrih_shamblerzombie", false)){
-		SDKHook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
-	}
+	SDKHook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 }
 
 public void OnEntityDestroyed(int entity){
@@ -323,6 +323,7 @@ void GameConfig_Enable(GameConf conf, bool on = true)
 		case GameConf_Infinity: 	ServerCommand("sm_inf_ammo %d", (on?1:0) );
 		case GameConf_DoubleJump: 	g_cfg_doublejump.IntValue = on;
 		case GameConf_GlassCannon:	InitGlassCannon(on);
+		case GameConf_Challenge:	sv_challenge.BoolValue = on;
 		case GameConf_Default:		GameConfig_Def();
 	}
 }

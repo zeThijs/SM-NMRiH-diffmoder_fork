@@ -96,14 +96,14 @@ void BecomeRunner(int entityref){
 
 bool IsValidShamblerzombie(int zombie)
 {
-    if((zombie <= MaxClients) || !IsValidEntity(zombie))
+    if( !IsValidEntity(zombie) )
         return false;
 
     //Fix bosses being tranformed: targetname check
     decl String:sName[4];
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
     
-    if ( !StrEqual(sName, "", false)){
+    if ( !StrEqual(sName, "", false) ){
         // PrintToServer("Has name, skipping..");
         return false;
     }
@@ -119,22 +119,14 @@ bool IsValidShamblerzombie(int zombie)
 //fastest would be to hook zombie speed in here to prevent unnecessary checks
 public void SDKHookCB_ZombieSpawnPost(int zombie)
 {
-	if(!g_bEnable || !IsValidEntity(zombie) || !IsValidShamblerzombie(zombie))
+	if( !IsValidShamblerzombie(zombie) )
 		SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 
-	float orgin[3];
-	GetEntPropVector(zombie, Prop_Send, "m_vecOrigin", orgin);
-    
-
 	switch(Game_GetMod())	{
-		case GameMod_Runner:		
-        {
-            //BecomeRunner(EntIndexToEntRef(zombie))          ; //disabling as this mod works TOO well: too many runners spawn for players
-            ShamblerToRunnerFromPosion(zombie, orgin, false);
-        }
-		case GameMod_Kid:			ShamblerToRunnerFromPosion(zombie, orgin, true); 
+		case GameMod_Runner:		ShamblerToRunner(zombie);
+		case GameMod_Kid:			ShamblerToKid(zombie); 
 		case GameMod_Crawler: {
-            BecomeCrawler(EntIndexToEntRef(zombie));
+            BecomeCrawler( EntIndexToEntRef(zombie) );
             DataPack data = CreateDataPack();
             data.WriteCell(zombie);
             RequestFrame(CB_CrawlerSpeed, data);
@@ -159,37 +151,43 @@ public void CB_CrawlerSpeed(DataPack data)
 void Game_ShamblerToRunner(const GameMod mod)
 {
 	int MaxEnt = GetMaxEntities();
-	for(int zombie = MaxClients + 1; zombie <= MaxEnt; zombie++){
-		if(!IsValidShamblerzombie(zombie)) continue;
-		float orgin[3];
-		GetEntPropVector(zombie, Prop_Send, "m_vecOrigin", orgin);
-		switch(mod){
-			case GameMod_Runner:	BecomeRunner(EntIndexToEntRef(zombie));
-			case GameMod_Kid:		ShamblerToRunnerFromPosion(zombie, orgin, true);
+	for(int zombie = MaxClients + 1; zombie <= MaxEnt; zombie++)
+    {
+		if ( !IsValidShamblerzombie(zombie) ) continue;
+
+		switch(mod)
+        {
+			case GameMod_Runner:	ShamblerToRunner(zombie);
+			case GameMod_Kid:		ShamblerToKid(zombie);
 		}
 	}
 }
 
-int FastZombie_Create(float orgin[3], bool isKid = false)
+//wrappers for clarity
+int ShamblerToKid(int entity)
 {
-	int zombie = -1;
-	zombie = CreateEntityByName(isKid ? "npc_nmrih_kidzombie" : "npc_nmrih_turnedzombie");
-	if(!IsValidEntity(zombie)) return -1;
-
-	if(DispatchSpawn(zombie)) TeleportEntity(zombie, orgin, NULL_VECTOR, NULL_VECTOR);
-
-	return zombie;
+    return ShamblerToRunnerFromPosion(entity, false);
+}
+int ShamblerToRunner(int entity)
+{
+    return ShamblerToRunnerFromPosion(entity, true);
 }
 
-
-int ShamblerToRunnerFromPosion(int shamblerrunner, float pos[3], bool isKid = false)
+int ShamblerToRunnerFromPosion(int entity, bool isKid = false)
 {
-	AcceptEntityInput(shamblerrunner, "kill");
-	RemoveEdict(shamblerrunner);
-	return FastZombie_Create(pos, isKid);
+    float orgin[3];
+    GetEntPropVector(entity, Prop_Send, "m_vecOrigin", orgin);
+
+    AcceptEntityInput(entity, "kill");
+    RemoveEdict(entity);
+
+	int npc = -1;
+	npc = CreateEntityByName( isKid?"npc_nmrih_kidzombie":"npc_nmrih_runnerzombie" );
+	if(!IsValidEntity(npc)) return -1;
+	if(DispatchSpawn(npc)) TeleportEntity(npc, orgin, NULL_VECTOR, NULL_VECTOR);
+
+	return npc;
 }
-
-
 
 
 
@@ -213,18 +211,13 @@ void zombiespeeds_init(){
     PrepSDKCall_SetReturnInfo(SDKType_String, SDKPass_Pointer);
     g_sdkcall_get_sequence_name = EndPrepSDKCall();
 
-    //
     // Changing movement speed
-    //
     int offset = GameConfGetOffsetOrFail(gameconf, "CBaseAnimating::GetSequenceGroundSpeed");
 
     g_dhook_change_zombie_ground_speed = DHookCreate(offset, HookType_Entity, ReturnType_Float, ThisPointer_CBaseEntity, DHook_ChangeZombieGroundSpeed);
     DHookAddParam(g_dhook_change_zombie_ground_speed, HookParamType_ObjectPtr); // CStudioHdr *
     DHookAddParam(g_dhook_change_zombie_ground_speed, HookParamType_Int); // sequence
-
-    //
     // Changing playback speed
-    //
     offset = GameConfGetOffsetOrFail(gameconf, "CAI_BaseNPC::NPC_TranslateActivity");
 
     g_dhook_change_zombie_playback_speed = DHookCreate(offset, HookType_Entity, ReturnType_Int, ThisPointer_CBaseEntity, DHook_ChangeZombiePlaybackSpeed);

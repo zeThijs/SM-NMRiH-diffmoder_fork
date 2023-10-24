@@ -39,7 +39,8 @@ char ConfigsStrings[][] =
 	"Hardcore",
 	"Infinity",
 	"DoubleJump",
-	"GlassCannon"
+	"GlassCannon",
+	"Challenge Timer"
 };
 
 bool DifsEnabled[sizeof(DifStrings)];
@@ -68,7 +69,8 @@ char sDifVote[][] =
 	"ConfMenuHardcoreVote",
 	"ConfMenuInfinityVote",
 	"ConfMenuItemDoubleJump",
-	"ConfMenuItemGlassCannon"
+	"ConfMenuItemGlassCannon",
+	"ConfMenuItemChallenge",
 },
 	sConfItem[][] =
 {
@@ -78,7 +80,8 @@ char sDifVote[][] =
 	"ConfMenuItemHardcore",
 	"ConfMenuItemInfinity",
 	"ConfMenuItemDoubleJump",
-	"ConfMenuItemGlassCannon"
+	"ConfMenuItemGlassCannon",
+	"ConfMenuItemChallenge"
 };
 
 
@@ -104,6 +107,7 @@ enum GameConf{
 	GameConf_Infinity,
 	GameConf_DoubleJump,
 	GameConf_GlassCannon,
+	GameConf_Challenge,
 	GameConf_INVALID		//invalid or error entry, keep last!!
 };
 
