@@ -194,6 +194,12 @@
 		"chi"			"玻璃大炮"
 		"ru"			"стеклянная пушка"
 	}
+	"ConfMenuItemChallenge"
+	{
+		"en"			"Challenge Mode (timer)"
+		"chi"			"挑战模式（计时器）"
+		"ru"			"Режим вызова (таймер)"
+	}
 	"ConfMenuItemHardcore"
 	{
 		"en"			"Hardcore"
