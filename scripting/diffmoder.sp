@@ -291,13 +291,20 @@ public void OnPluginEnd(){
 }
 
 
-public void OnEntityCreated_Post(int entity, const char[] classname)
+public void OnEntityCreated(int entity, const char[] classname)
 {
-	if(!g_bEnable || !( entity > MaxClients) ) return;
+	// PrintToServer("Gamemod: %d, %s", view_as<int>(Game_GetMod()), sModItem[view_as<int>(Game_GetMod())]);
+	if(!g_bEnable || !( entity > MaxClients) || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity) ) 
+	{
+		// PrintToServer("Skipping sdkhook spawnpost..");
+		return;
+	}
 
 	SDKHook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 }
 
+
+//why is this here? not needed..
 public void OnEntityDestroyed(int entity){
 	if(g_bEnable && IsValidShamblerzombie(entity)) SDKUnhook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 }

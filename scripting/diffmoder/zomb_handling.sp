@@ -96,33 +96,31 @@ void BecomeRunner(int entityref){
 
 bool IsValidShamblerzombie(int zombie)
 {
-    if( !IsValidEntity(zombie) )
+    if (!IsValidEntity(zombie))
         return false;
-
+        
     //Fix bosses being tranformed: targetname check
-    decl String:sName[4];
+    decl String:sName[2];
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
-    
-    if ( !StrEqual(sName, "", false) ){
-        // PrintToServer("Has name, skipping..");
-        return false;
-    }
 
     //classname check broke, something is fucky, accidental whitespace?
     char classname[8];   //purposely omit trailing classname substring
     GetEntityClassname(zombie, classname, sizeof(classname));
-
-    return StrEqual(classname, "npc_nmrih_shambler", false);
+    if( StrEqual(classname, "npc_nmrih_shambler", false) &&  StrEqual(sName, "", false) )
+        return true;
+    else
+        return false;
 }
 
 //transform shamblers to specials, and -not implemented yet- crawlers
 //fastest would be to hook zombie speed in here to prevent unnecessary checks
 public void SDKHookCB_ZombieSpawnPost(int zombie)
 {
-	if( !IsValidShamblerzombie(zombie) )
-		SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
+    // PrintToServer("spawnpost happen");
+	// if( !IsValidShamblerzombie(zombie) )
+	// 	SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 
-	switch(Game_GetMod())	{
+	switch( Game_GetMod() )	{
 		case GameMod_Runner:		ShamblerToRunner(zombie);
 		case GameMod_Kid:			ShamblerToKid(zombie); 
 		case GameMod_Crawler: {
@@ -133,6 +131,7 @@ public void SDKHookCB_ZombieSpawnPost(int zombie)
 		}
 	}
 	SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
+    
 }
 
 
