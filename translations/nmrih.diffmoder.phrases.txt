@@ -220,7 +220,7 @@
 	}
 	"ConfMenuItemDefault"
 	{
-		"en"			"default"
+		"en"			"Default"
 		"chi"			"默认参数"
 		"ru"			"по умолчанию"
 	}
@@ -256,13 +256,13 @@
 	}
 	"DifMenuItemDefault"
 	{
-		"en"			"default"
+		"en"			"Default"
 		"chi"			"默认难度"
 		"ru"			"по умолчанию"
 	}
 	"ModMenuItemDefault"
 	{
-		"en"			"default"
+		"en"			"Default"
 		"chi"			"默认模式"
 		"ru"			"по умолчанию"
 	}

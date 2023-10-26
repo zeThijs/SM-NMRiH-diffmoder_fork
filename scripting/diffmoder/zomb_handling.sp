@@ -88,7 +88,6 @@ void BecomeCrawler(int entityref){
     RunEntVScript(entityref, "BecomeCrawler()", g_iEnt_VscriptProxy);
 }
 
-
 void BecomeRunner(int entityref){
     RunEntVScript(entityref, "BecomeRunner()", g_iEnt_VscriptProxy);
 }
@@ -98,15 +97,15 @@ bool IsValidShamblerzombie(int zombie)
 {
     if (!IsValidEntity(zombie))
         return false;
-        
     //Fix bosses being tranformed: targetname check
     decl String:sName[2];
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
 
     //classname check broke, something is fucky, accidental whitespace?
-    char classname[8];   //purposely omit trailing classname substring
+    char classname[19];   //purposely omit trailing classname substring
     GetEntityClassname(zombie, classname, sizeof(classname));
-    if( StrEqual(classname, "npc_nmrih_shambler", false) &&  StrEqual(sName, "", false) )
+    // PrintToServer(classname[10]);
+    if( StrEqual(classname[10], "shambler", false) &&  StrEqual(sName, "", false) )
         return true;
     else
         return false;
@@ -152,24 +151,25 @@ void Game_ShamblerToRunner(const GameMod mod)
 	int MaxEnt = GetMaxEntities();
 	for(int zombie = MaxClients + 1; zombie <= MaxEnt; zombie++)
     {
-		if ( !IsValidShamblerzombie(zombie) ) continue;
-
-		switch(mod)
+		if ( IsValidShamblerzombie(zombie) ) 
         {
-			case GameMod_Runner:	ShamblerToRunner(zombie);
-			case GameMod_Kid:		ShamblerToKid(zombie);
-		}
+            switch(mod)
+            {
+                case GameMod_Runner:	ShamblerToRunner(zombie);
+                case GameMod_Kid:		ShamblerToKid(zombie);
+            }
+        }
 	}
 }
 
 //wrappers for clarity
 int ShamblerToKid(int entity)
 {
-    return ShamblerToRunnerFromPosion(entity, false);
+    return ShamblerToRunnerFromPosion(entity, true);
 }
 int ShamblerToRunner(int entity)
 {
-    return ShamblerToRunnerFromPosion(entity, true);
+    return ShamblerToRunnerFromPosion(entity, false);
 }
 
 int ShamblerToRunnerFromPosion(int entity, bool isKid = false)

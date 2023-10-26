@@ -247,7 +247,9 @@ public void OnClientDisconnect_Post()
 
 public Action Timertest(Handle timer)
 {
+	#if defined DEBUG
 	PrintToServer("Auto Difficulty Timer completed");
+	#endif
 	int playercount = GetClientCount();
 	if ( playercount > 0 )
 	{
@@ -294,9 +296,14 @@ public void OnPluginEnd(){
 public void OnEntityCreated(int entity, const char[] classname)
 {
 	// PrintToServer("Gamemod: %d, %s", view_as<int>(Game_GetMod()), sModItem[view_as<int>(Game_GetMod())]);
-	if(!g_bEnable || !( entity > MaxClients) || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity) ) 
+	// if(!g_bEnable || !( entity > MaxClients) || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity) ) 
+	// {
+	// 	// PrintToServer("Skipping sdkhook spawnpost..");
+	// 	return;
+	// }
+
+	if(!g_bEnable ||  entity <= MaxClients || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity)) 
 	{
-		// PrintToServer("Skipping sdkhook spawnpost..");
 		return;
 	}
 
