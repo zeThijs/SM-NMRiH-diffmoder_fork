@@ -117,7 +117,6 @@ ConVar sv_max_runner_chance, ov_runner_chance,
 	sv_realism, sv_hardcore_survival, sv_difficulty,
 	sv_zombie_crawler_health,
 	sv_zombie_moan_freq,
-	sv_current_diffmode,
 	phys_pushscale,	mp_friendlyfire,
 
 	g_cfg_diffmoder,

@@ -439,6 +439,7 @@ void GameMod_Enable(GameMod mod)
 		{
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 1.0;
 			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
+			sv_spawn_regen_target.FloatValue = 0.0;
 			ConVarCrawler(false);
 		}
 		case GameMod_Kid:
@@ -446,14 +447,20 @@ void GameMod_Enable(GameMod mod)
 			ov_runner_chance.FloatValue 	= g_fRunner_chance_default;
 			sv_max_runner_chance.FloatValue = g_fRunner_chance_max_default;
 			ov_runner_kid_chance.FloatValue = 1.0;
+			sv_spawn_regen_target.FloatValue = 0.0;
 			ConVarCrawler(false);
 		}
-		case GameMod_Crawler: ConVarCrawler(true);
+		case GameMod_Crawler: 
+		{
+			ConVarCrawler(true);
+			sv_spawn_regen_target.FloatValue = g_fSpawn_regen_target_default;
+		}
 		case GameMod_NoMod:
 		{
 			ov_runner_chance.FloatValue 	= g_fRunner_chance_default;
 			sv_max_runner_chance.FloatValue = g_fRunner_chance_max_default;
 			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
+			sv_spawn_regen_target.FloatValue = g_fSpawn_regen_target_default;
 			ConVarCrawler(false);
 		}
 	}
@@ -493,11 +500,7 @@ void GameDiff_Enable(GameDif dif)
 	{
 		case GameDif_Classic:	{sv_difficulty.SetString("classic");}
 		case GameDif_Casual:	{sv_difficulty.SetString("casual");}
-		case GameDif_Nightmare:	
-		{
-			sv_difficulty.SetString("nightmare");
-			SetConVarInt(sv_current_diffmode, 2);
-		}
+		case GameDif_Nightmare: {sv_difficulty.SetString("nightmare");}
 		case GameDif_Default:	
 		{
 			char buff[128];
