@@ -46,7 +46,7 @@ int g_iEnt_VscriptProxy;
 
 ArrayList g_zombie_speeds;
 
-ConVar 	g_zombie_speeds_enabled, 
+ConVar 	/*g_zombie_speeds_enabled,*/ 
  		g_crawler_speed,
  		g_crawler_speed_plusminus;
 
@@ -238,30 +238,30 @@ public MRESReturn DHook_ChangeZombieGroundSpeed(int zombie, Handle return_handle
 {
     MRESReturn result = MRES_Ignored;
 
-    if (g_zombie_speeds_enabled.BoolValue)
-    {
-        int sequence = DHookGetParam(params, 2);
-        char sequence_name[32];
-        SDKCall(g_sdkcall_get_sequence_name, zombie, sequence_name, sizeof(sequence_name), sequence);
+    // if (g_zombie_speeds_enabled.BoolValue)
+    // {
+    int sequence = DHookGetParam(params, 2);
+    char sequence_name[32];
+    SDKCall(g_sdkcall_get_sequence_name, zombie, sequence_name, sizeof(sequence_name), sequence);
 
-        if (IsMoveSequence(sequence_name))
-        {
-            float speed = DHookGetReturn(return_handle);
-            float scalar = g_zombie_speeds.Get(zombie);
-            DHookSetReturn(return_handle, speed * scalar);
-            result = MRES_Override;
-        }
+    if (IsMoveSequence(sequence_name))
+    {
+        float speed = DHookGetReturn(return_handle);
+        float scalar = g_zombie_speeds.Get(zombie);
+        DHookSetReturn(return_handle, speed * scalar);
+        result = MRES_Override;
     }
+    // }
 
     return result;
 }
 
 public MRESReturn DHook_ChangeZombiePlaybackSpeed(int zombie, Handle return_handle, Handle params)
 {
-    if (g_zombie_speeds_enabled.BoolValue)
-    {
-        SetEntPropFloat(zombie, Prop_Data, "m_flPlaybackRate", g_zombie_speeds.Get(zombie));
-    }
+    // if (g_zombie_speeds_enabled.BoolValue)
+    // {
+    SetEntPropFloat(zombie, Prop_Data, "m_flPlaybackRate", g_zombie_speeds.Get(zombie));
+    // }
     return MRES_Ignored;
 }
 

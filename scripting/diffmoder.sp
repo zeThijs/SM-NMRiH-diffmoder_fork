@@ -130,6 +130,7 @@ public void OnPluginStart()
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
 
 
+
 	//Init zombiespeeds
 	g_zombie_speeds				= new ArrayList(1,GetMaxEntities());
 	g_crawler_speed				= CreateConVar("sm_crawler_speed", "1.0", "Amount to scale crawlers' movement speed by. E.g. 1.0 means move at normal speed.");
