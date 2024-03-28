@@ -154,7 +154,7 @@ void Game_ShamblerToRunner(const GameMod mod)
         {
             switch(mod)
             {
-                case GameMod_Runner:	ShamblerToRunner(zombie);
+                case GameMod_Runner:	BecomeRunner(zombie);
                 case GameMod_Kid:		ShamblerToKid(zombie);
             }
         }
