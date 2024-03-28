@@ -97,14 +97,13 @@ bool IsValidShamblerzombie(int zombie)
 {
     if (!IsValidEntity(zombie))
         return false;
-    //Fix bosses being tranformed: targetname check
-    decl String:sName[2];
+    
+    decl String:sName[2];   //Fix bosses being tranformed with a targetname check
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
 
     //classname check broke, something is fucky, accidental whitespace?
     char classname[19];   //purposely omit trailing classname substring
     GetEntityClassname(zombie, classname, sizeof(classname));
-    // PrintToServer(classname[10]);
     if( StrEqual(classname[10], "shambler", false) &&  StrEqual(sName, "", false) )
         return true;
     else
@@ -120,7 +119,7 @@ public void SDKHookCB_ZombieSpawnPost(int zombie)
 	// 	SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 
 	switch( Game_GetMod() )	{
-		case GameMod_Runner:		ShamblerToRunner(zombie);
+		case GameMod_Runner:		BecomeRunner(zombie);
 		case GameMod_Kid:			ShamblerToKid(zombie); 
 		case GameMod_Crawler: {
             BecomeCrawler( EntIndexToEntRef(zombie) );

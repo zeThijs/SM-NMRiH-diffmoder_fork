@@ -441,6 +441,7 @@ void GameMod_Enable(GameMod mod)
 			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
 			sv_spawn_regen_target.FloatValue = 0.0;
 			ConVarCrawler(false);
+			Game_ShamblerToRunner(GameMod_Runner);
 		}
 		case GameMod_Kid:
 		{
@@ -449,6 +450,7 @@ void GameMod_Enable(GameMod mod)
 			ov_runner_kid_chance.FloatValue = 1.0;
 			sv_spawn_regen_target.FloatValue = 0.0;
 			ConVarCrawler(false);
+			Game_ShamblerToRunner(GameMod_Kid);
 		}
 		case GameMod_Crawler: 
 		{
