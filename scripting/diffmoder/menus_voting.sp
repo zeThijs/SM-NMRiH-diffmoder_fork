@@ -674,10 +674,8 @@ void DensityMenu_ShowToClient(const int client)
 
     menu.AddItem("1", "x1");
     menu.AddItem("2", "x2");
-    menu.AddItem("3", "x3");
-    menu.AddItem("5", "x5");
+    menu.AddItem("4", "x4");
     menu.AddItem("8", "x8");
-    menu.AddItem("10", "x10");
 
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
