@@ -369,4 +369,24 @@
 		"chi"			"选择参数"
 		"ru"			"Выберите настройки"
 	}
+
+	"DensityMenuTitle"
+	{
+		"en"			"Do you like a challenge?"
+		"chi"			"你喜欢挑战吗？"
+		"ru"			"Вам нравится вызов?"
+	}	
+	"DensityMenuVote"
+	{
+		"#format"		"{1:s}{2:s}"
+		"en"			"{1} want to vote for changing population to x{2}"
+		"chi"			"{1} 想要投票支持将人口更改为 x{2}"
+		"ru"			"{1} хочу проголосовать за изменение численности населения на x{2}"
+	}	
+	"TopMenuDensity"
+	{
+		"en"			"Density Config"
+		"chi"			"密度配置"
+		"ru"			"Конфигурация плотности"
+	}	
 }

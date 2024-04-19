@@ -117,6 +117,7 @@ ConVar sv_max_runner_chance, ov_runner_chance,
 	sv_realism, sv_hardcore_survival, sv_difficulty,
 	sv_zombie_crawler_health,
 	sv_zombie_moan_freq,
+	sv_spawn_density,
 	phys_pushscale,	mp_friendlyfire,
 
 	g_cfg_diffmoder,
@@ -139,7 +140,7 @@ ConVar sv_max_runner_chance, ov_runner_chance,
 	g_cfg_mods_enabled,
 	g_cfg_configs_enabled;
 
-
+ConVar  g_cfg_density_enabled;
 bool g_bEnable;
 
 
@@ -190,6 +191,11 @@ void TopMenu_ShowToClient(const int client)
 	menu.AddItem("1", buffer);
 	Format(buffer, sizeof(buffer), "%T", "TopMenuItemConfig", client);
 	menu.AddItem("2", buffer);
+	if (g_cfg_density_enabled.BoolValue)
+	{
+		Format(buffer, sizeof(buffer), "%T", "TopMenuDensity", client);
+		menu.AddItem("3", buffer);
+	}
 	menu.ExitButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
 }
@@ -208,6 +214,7 @@ public int MenuHandler_TopMenu(Menu menu, MenuAction action, int client, int par
 				case 0: ModMenu_ShowToClient(client);
 				case 1: DifMenu_ShowToClient(client);
 				case 2: ConfMenu_ShowToClient(client);
+				case 3: DensityMenu_ShowToClient(client);
 			}
 		}
 	}
@@ -644,6 +651,135 @@ public int MenuHandler_ConfVote(Menu menu, MenuAction action, int param1, int pa
 			}
 			GameConfig_Enable(conf, true);
 			PrintToChatAll("\x04%t\x01 %t", "ChatFlag", conf == GameConf_Default ? "VoteFinish" : "VoteFinishToOn");
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+void DensityMenu_ShowToClient(const int client)
+{
+	Menu menu = new Menu(MenuHandler_DensityMenu);
+	menu.SetTitle("Density", client);
+
+
+    menu.AddItem("1", "x1");
+    menu.AddItem("2", "x2");
+    menu.AddItem("3", "x3");
+    menu.AddItem("5", "x5");
+    menu.AddItem("8", "x8");
+    menu.AddItem("10", "x10");
+
+	menu.ExitBackButton = true;
+	menu.Display(client, MENU_TIME_FOREVER);
+}
+
+public int MenuHandler_DensityMenu(Menu menu, MenuAction action, int client, int param2)
+{
+	switch(action)
+	{
+		case MenuAction_End:	delete menu;
+		case MenuAction_Cancel:	TopMenu_ShowToClient(client);
+		case MenuAction_Select:
+		{
+			if(Game_CanEnable(client))
+			{
+				char density[32];
+				menu.GetItem(param2, density, sizeof(density));
+				DensityMenu_Vote(client, density);
+			}
+		}
+	}
+	return 0;
+}
+
+ 
+void DensityMenu_Vote(const int client, char[] conf)
+{
+	if(!Game_CanEnable(client)) return;
+
+	if(IsVoteInProgress())
+	{
+		PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteInProgress", client);
+		return;
+	}
+	if(!TestVoteDelay(client)) return;
+
+	char item_yes[32], item_no[32], name[32], item_yes_flag[32], item_no_flag[32];
+	GetClientName(client, name, sizeof(name));
+	Format(item_yes, sizeof(item_yes), "%T", "On", client);
+	Format(item_no, sizeof(item_no), "%T", "Off", client);
+	Format(item_yes_flag, sizeof(item_yes_flag), "%d", conf);
+	Format(item_no_flag, sizeof(item_no_flag), "Off,%d", conf);
+
+
+	Menu menu = new Menu(MenuHandler_DisplayVote, MENU_ACTIONS_ALL);
+	menu.SetTitle("%T", "DensityMenuVote", client, name, conf);
+	menu.AddItem(item_yes_flag, item_yes);
+	menu.AddItem(item_no_flag, item_no);
+	menu.DisplayVoteToAll(MENUDISPLAY_TIME);
+    
+	return;
+}
+
+public int MenuHandler_DisplayVote(Menu menu, MenuAction action, int param1, int param2)
+{
+	switch(action){
+		case MenuAction_End: delete menu;
+		case MenuAction_DisplayItem:
+		{
+			char display[64], item_yes[32], item_no[32];
+			Format(item_yes, sizeof(item_yes), "%T", "On", param1);
+			Format(item_no, sizeof(item_no), "%T", "Off", param1);
+			menu.GetItem(param2, "", 0, _, display, sizeof(display));
+			if(!strcmp(display, item_no) || !strcmp(display, item_yes)) return RedrawMenuItem(display);
+		}
+		case MenuAction_VoteCancel: PrintToChatAll("\x04%t\x01 %t", "ChatFlag", "NoVotesCast");
+		case MenuAction_VoteEnd:
+		{
+			//param1: 1 is no, 0 is yes
+
+			int votes, totalVotes;
+			GetMenuVoteInfo(param2, votes, totalVotes);
+
+			char item[8];
+			menu.GetItem(param1, item, sizeof(item));
+
+			//I do not know why sourcemod is saving this string number as its unicode representation and then not passing it correctly here...
+			// queue convolutely converting this dickhead value..
+
+			char val = view_as<char>(StringToInt(item, 10));
+			Format(item, sizeof(item), "%c", val);
+			int realvalue = StringToInt(item, 10);
+
+			if (realvalue>10)
+			{
+				realvalue = 10;
+			}
+			// PrintToServer("itemtoint: %i",  realvalue);
+
+			if(param1 == 1) 
+				votes = totalVotes - votes;
+			if((FloatCompare(GetVotePercent(votes, totalVotes), VOTE_LIMIT) < 0 && !param1) || param1 == 1)
+			{
+				PrintToChatAll("\x04%t\x01 %t", "ChatFlag", "VoteFailed");
+			}
+			else
+			{
+				PrintToChatAll("\x04%t\x01 %t", "ChatFlag", "VoteFinishToOn");
+				PrintToChatAll("Setting Density to x%i", realvalue);
+				sv_spawn_density.IntValue = realvalue;
+			}
+			return 0;	
 		}
 	}
 	return 0;

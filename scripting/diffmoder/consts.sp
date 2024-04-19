@@ -1,6 +1,0 @@
-#define PLUGIN_NAME "[NMRiH] Difficulty Moder V2"
-#define CRAWLERHEALTH_ANKLE 100
-#define PUSHSCALE_ANKLE 2000
-#define CRAWLERCHANCE 1.0
-#define CRAWLERSPEED 4
-

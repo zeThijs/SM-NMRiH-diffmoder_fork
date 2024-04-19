@@ -98,13 +98,13 @@ bool IsValidShamblerzombie(int zombie)
     if (!IsValidEntity(zombie))
         return false;
     
-    decl String:sName[2];   //Fix bosses being tranformed with a targetname check
+    char sName[2];   //Fix bosses being tranformed with a targetname check
     GetEntPropString(zombie, Prop_Data, "m_iName", sName, sizeof(sName)); 
 
     //classname check broke, something is fucky, accidental whitespace?
     char classname[19];   //purposely omit trailing classname substring
     GetEntityClassname(zombie, classname, sizeof(classname));
-    if( StrEqual(classname[10], "shambler", false) &&  StrEqual(sName, "", false) )
+    if( StrEqual(classname[10], "shambler", false) && StrEqual(sName, "", false) )
         return true;
     else
         return false;

@@ -31,7 +31,19 @@
 
 #include "diffmoder/menus_voting.sp"
 #include "diffmoder/zomb_handling.sp"
-#include "diffmoder/consts.sp"
+
+
+
+#define PLUGIN_NAME "[NMRiH] Difficulty Moder "
+#define AUTHOR "Mostten, Rogue Garlicbread|Thijs"
+#define VERSION "2.5.0"
+#define CRAWLERHEALTH_ANKLE 100
+#define PUSHSCALE_ANKLE 2000
+#define CRAWLERCHANCE 1.0
+#define CRAWLERSPEED 4
+
+
+
 
 float	g_fRunner_chance_default;
 float	g_fRunner_chance_max_default;
@@ -53,6 +65,7 @@ ConVar  sv_health_station_heal_per_tick;
 ConVar  sv_spawn_regen_target;
 ConVar  sv_challenge;
 
+
 Handle 	g_hDiffMod_Timer;
 
 GameMod	g_eGameMode;	//int
@@ -63,9 +76,9 @@ int 	g_eGameCFG[sizeof(sConfItem)];	//array of individual conf items enabled or 
 public Plugin myinfo =
 {
 	name		= PLUGIN_NAME,
-	author		= "Mostten, Rogue Garlicbread|Thijs",
+	author		= AUTHOR,
 	description	= "Allow player to enable the change difficult and mod by ballot.",
-	version		= "2.4.1",
+	version		= VERSION,
 	url			= "https://forums.alliedmods.net/showthread.php?t=301322"
 }
 
@@ -94,6 +107,7 @@ public void OnPluginStart()
 	g_fSpawn_regen_target_default 	= GetConVarFloat(sv_spawn_regen_target);
 
 	sv_zombie_moan_freq		= FindConVar("sv_zombie_moan_freq");
+	sv_spawn_density		= FindConVar("sv_spawn_density");
 	phys_pushscale 			= FindConVar("phys_pushscale");
 
 	sv_realism 				= FindConVar("sv_realism");
@@ -130,13 +144,16 @@ public void OnPluginStart()
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
 
 
+	g_cfg_density_enabled	= CreateConVar("diffmoder_density", "1", "Enable the ability to select zombie spawn density.");
+
 
 	//Init zombiespeeds
 	g_zombie_speeds				= new ArrayList(1,GetMaxEntities());
 	g_crawler_speed				= CreateConVar("sm_crawler_speed", "1.0", "Amount to scale crawlers' movement speed by. E.g. 1.0 means move at normal speed.");
 	g_crawler_speed_plusminus	= CreateConVar("sm_crawler_speed_plusminus", "0.05", "Set the range of random variation in crawlers' movement speed.");
 
-	PrintToServer("Starting diffmoder..");
+	PrintToServer("%s %s by %s is starting ..", PLUGIN_NAME, VERSION, AUTHOR);
+
 	g_bEnable 						= g_cfg_diffmoder.BoolValue;
 
 
@@ -296,17 +313,9 @@ public void OnPluginEnd(){
 
 public void OnEntityCreated(int entity, const char[] classname)
 {
-	// PrintToServer("Gamemod: %d, %s", view_as<int>(Game_GetMod()), sModItem[view_as<int>(Game_GetMod())]);
-	// if(!g_bEnable || !( entity > MaxClients) || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity) ) 
-	// {
-	// 	// PrintToServer("Skipping sdkhook spawnpost..");
-	// 	return;
-	// }
 
 	if(!g_bEnable ||  entity <= MaxClients || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity)) 
-	{
 		return;
-	}
 
 	SDKHook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 }
