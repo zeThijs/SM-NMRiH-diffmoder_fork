@@ -16,19 +16,19 @@
 	{
 		"en"			"on"
 		"chi"			"开"
-		"ru"			"включено"
+		"ru"			"вкл."
 	}
 	"Off"
 	{
 		"en"			"off"
 		"chi"			"关"
-		"ru"			"выключено"
+		"ru"			"откл."
 	}
 	"VoteInProgress"
 	{
 		"en"			"Vote in Progress"
 		"chi"			"投票正在进行中"
-		"ru"			"Запущено голосование"
+		"ru"			"Идёт голосование"
 	}
 	"NoVotesCast"
 	{
@@ -64,21 +64,21 @@
 	{
 		"en"			"Vote Finish switch to off"
 		"chi"			"大部分玩家选择关闭此参数"
-		"ru"			"Большинство проголосовало за выключение"
+		"ru"			"Большинство проголосовало за отключение"
 	}
 	"VoteDelayMinutes"
 	{
 		"#format"		"{1:d}"
 		"en"			"You must wait {1} minutes before starting another vote."
 		"chi"			"您必须再等 {1} 分钟后才能发起新一轮投票."
-		"ru"			"Вы должны подождать {1} минут, прежде чем начать новое голосование"
+		"ru"			"Подождите {1} мин., прежде чем начать новое голосование."
 	}
 	"VoteDelaySeconds"
 	{
 		"#format"		"{1:d}"
 		"en"			"You must wait {1} seconds before starting another vote."
 		"chi"			"您必须再等 {1} 秒钟后才能发起新一轮投票."
-		"ru"			"Вы должны подождать {1} секунд, прежде чем начать новое голосование"
+		"ru"			"Подождите {1} сек., прежде чем начать новое голосование."
 	}
 	"ChatFlag"
 	{
@@ -114,7 +114,7 @@
 	{
 		"en"			"[Friendly Fire]"
 		"chi"			"[友伤]"
-		"ru"			"[Дружественный огонь]"
+		"ru"			"[Огонь по своим]"
 	}
 	"HardcoreFlag"
 	{
@@ -126,7 +126,7 @@
 	{
 		"en"			"The DiffModer was disabled."
 		"chi"			"服务器已禁止更改难度模式."
-		"ru"			"DiffModer был отключён"
+		"ru"			"DiffModer был отключён."
 	}
 	"TopMenuTitle"
 	{
@@ -144,31 +144,31 @@
 	{
 		"en"			"Game Difficult"
 		"chi"			"游戏难度"
-		"ru"			"Сложность игры"
+		"ru"			"Сложн. игры"
 	}
 	"TopMenuItemConfig"
 	{
 		"en"			"Game Configs"
 		"chi"			"游戏参数"
-		"ru"			"Настройки игры"
+		"ru"			"Настр. игры"
 	}
 	"ModMenuTitle"
 	{
 		"en"			"Mod Select"
 		"chi"			"选择模式"
-		"ru"			"Выберите режим:"
+		"ru"			"Режим:"
 	}
 	"ConfMenuTitle"
 	{
 		"en"			"Configs Select"
 		"chi"			"选择打开关闭参数"
-		"ru"			"Выберите настройки:"
+		"ru"			"Настройки:"
 	}
 	"DifMenuTitle"
 	{
 		"en"			"Difficult Select"
 		"chi"			"选择难度"
-		"ru"			"Выберите сложность:"
+		"ru"			"Сложность:"
 	}
 	"ModMenuItemRunner"
 	{
@@ -186,43 +186,43 @@
 	{
 		"en"			"Friendly Fire"
 		"chi"			"友伤开关"
-		"ru"			"Дружественный огонь"
+		"ru"			"Огонь по своим"
 	}
 	"ConfMenuItemGlassCannon"
 	{
 		"en"			"Glass Cannon"
 		"chi"			"玻璃大炮"
-		"ru"			"стеклянная пушка"
+		"ru"			"Стеклянная пушка"
 	}
 	"ConfMenuItemChallenge"
 	{
 		"en"			"Challenge Mode (timer)"
 		"chi"			"挑战模式（计时器）"
-		"ru"			"Режим вызова (таймер)"
+		"ru"			"Испытание (таймер)"
 	}
 	"ConfMenuItemHardcore"
 	{
 		"en"			"Hardcore"
 		"chi"			"专家生还开关"
-		"ru"			"Хардкор"
+		"ru"			"«Хардкор»"
 	}
 	"ConfMenuItemInfinity"
 	{
 		"en"			"Infinity Ammo"
 		"chi"			"无限弹药开关"
-		"ru"			"бесконечное боеприпасов"
+		"ru"			"Бесконеч. боезап."
 	}
 	"ConfMenuItemDoubleJump"
 	{
 		"en"			"Double Jump"
 		"chi"			"双跳"
-		"ru"			"Dvoynoy pryzhok"
+		"ru"			"Двойной прыжок"
 	}
 	"ConfMenuItemDefault"
 	{
 		"en"			"Default"
 		"chi"			"默认参数"
-		"ru"			"по умолчанию"
+		"ru"			"По умолч."
 	}
 	"DifMenuItemClassic"
 	{
@@ -240,13 +240,13 @@
 	{
 		"en"			"Crawler"
 		"chi"			"咬踝者"
-		"ru"			"Лодыжки"
+		"ru"			"Ползуны"
 	}
 	"DifMenuItemCasual"
 	{
 		"en"			"Casual"
 		"chi"			"休闲难度"
-		"ru"			"Легко"
+		"ru"			"Свободный"
 	}
 	"DifMenuItemNightmare"
 	{
@@ -258,104 +258,104 @@
 	{
 		"en"			"Default"
 		"chi"			"默认难度"
-		"ru"			"по умолчанию"
+		"ru"			"По умолч."
 	}
 	"ModMenuItemDefault"
 	{
 		"en"			"Default"
 		"chi"			"默认模式"
-		"ru"			"по умолчанию"
+		"ru"			"По умолч."
 	}
 	"ModMenuRunerVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for all runner mod"
 		"chi"			"{1} 想投票更换全跑模式"
-		"ru"			"{1} запустил голосование за режим 'Только бегуны'"
+		"ru"			"{1} начинает голосование за режим «Только бегуны»"
 	}
 	"ModMenuCrawlerVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for all crawler hell"
 		"chi"			"{1} 想投票给所有爬虫地狱"
-		"ru"			"{1} хочу проголосовать за 'весь гусеничный ад'"
+		"ru"			"{1} начинает голосование за режим «Только ползуны»"
 	}
 	"ConfMenuRealismVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for switch the realism"
 		"chi"			"{1} 想投票切换写实参数"
-		"ru"			"{1} запустил голосование за режим 'Реализм'"
+		"ru"			"{1} начинает голосование за смену режима реализма"
 	}
 	"ConfMenuFriendlyVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for switch the friendly fire"
 		"chi"			"{1} 想投票切换友伤参数"
-		"ru"			"{1} запустил голосование за переключение режима дружественного огня"
+		"ru"			"{1} начинает голосование за смену режима огня по своим"
 	}
 	"ConfMenuHardcoreVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for difficulty to hardcore"
 		"chi"			"{1} 想投票切换专家生还参数"
-		"ru"			"{1} запустил голосование за сложность 'Хардкор'"
+		"ru"			"{1} начинает голосование за сложность «Хардкор»"
 	}
 	"ConfMenuInfinityVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for ammo to infinity"
 		"chi"			"{1} 想投票切换专家生还参数"
-		"ru"			"{1} запустил голосование за боеприпасов до бесконечности"
+		"ru"			"{1} начинает голосование за бесконечный боезапас"
 	}
 	"ConfMenuDefaultVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for switch the default configs"
 		"chi"			"{1} 想投票恢复参数"
-		"ru"			"{1} запустил голосование за возвращение настроек по умолчанию"
+		"ru"			"{1} начинает голосование за смену настроек по умолчанию"
 	}
 	"DifMenuClassicVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for difficulty to classic"
 		"chi"			"{1} 想投票更换难度为经典难度"
-		"ru"			"{1} запустил голосование за сложность 'Хардкор'"
+		"ru"			"{1} начинает голосование за сложность «Классика»"
 	}
 	"DifMenuCasualVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for difficulty to casual"
 		"chi"			"{1} 想投票更换难度为休闲难度"
-		"ru"			"{1} запустил голосование за сложность 'Легко'"
+		"ru"			"{1} начинает голосование за сложность «Свободный»"
 	}
 	"DifMenuNightmareVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for difficulty to nightmare"
 		"chi"			"{1} 想投票更换难度为噩梦难度"
-		"ru"			"{1} запустил голосование за сложность 'Кошмар'"
+		"ru"			"{1} начинает голосование за сложность «Кошмар»"
 	}
 	"DifMenuDefVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for default difficulty"
 		"chi"			"{1} 想投票更换回默认难度"
-		"ru"			"{1} запустил голосование за сложность по умолчанию"
+		"ru"			"{1} начинает голосование за сложность по умолчанию"
 	}
 	"ModMenuKidVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for all kid mod"
 		"chi"			"{1} 想投票更换全小孩模式"
-		"ru"			"{1} запустил голосование за режим 'Только дети'"
+		"ru"			"{1} начинает голосование за режим «Только дети»"
 	}
 	"ModMenuDefVote"
 	{
 		"#format"		"{1:s}"
 		"en"			"{1} want to vote for default mod"
 		"chi"			"{1} 想投票更换回默认模式"
-		"ru"			"{1} запустил голосование за "
+		"ru"			"{1} начинает голосование за режим по умолчанию"
 	}
 	"DifMenuTitle"
 	{
@@ -374,19 +374,19 @@
 	{
 		"en"			"Do you like a challenge?"
 		"chi"			"你喜欢挑战吗？"
-		"ru"			"Вам нравится вызов?"
+		"ru"			"Вы хотите испытание?"
 	}	
 	"DensityMenuVote"
 	{
 		"#format"		"{1:s}{2:s}"
 		"en"			"{1} want to vote for changing population to x{2}"
 		"chi"			"{1} 想要投票支持将人口更改为 x{2}"
-		"ru"			"{1} хочу проголосовать за изменение численности населения на x{2}"
+		"ru"			"{1} начинает голосование за изменение числа зомби на x{2}"
 	}	
 	"TopMenuDensity"
 	{
 		"en"			"Density Config"
 		"chi"			"密度配置"
-		"ru"			"Конфигурация плотности"
+		"ru"			"Настр. плотности"
 	}	
 }
