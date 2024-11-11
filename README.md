@@ -1,6 +1,10 @@
 # [NMRiH] NMRiH Diffmoder fork     
 **Sourcemod plugin which allows changing of gamemode via voting.**
 
+11/11/2024
+Added feature: mutator toggle support, convar diffmoder_mutators
+
+
 For base information about the plugin go here:
 *https://forums.alliedmods.net/showthread.php?t=301322*
 
