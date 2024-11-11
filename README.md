@@ -38,7 +38,6 @@ diffmoder_mutators                  -   "delimited, list, of, mutators: Which mu
 
 ## Credits:
 <pre>
-Feel free to use the code or plugin in any way
 
 Credits:
 
