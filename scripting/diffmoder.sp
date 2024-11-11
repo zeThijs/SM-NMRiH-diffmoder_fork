@@ -31,6 +31,7 @@
 
 #include "diffmoder/menus_voting.sp"
 #include "diffmoder/zomb_handling.sp"
+#include "diffmoder/glasscannon.sp"
 
 
 
@@ -51,18 +52,10 @@ float	g_fCrawler_chance_default;
 float	g_fRunner_kid_chance_default;
 
 int 	sv_crawler_health_default;
-float 	g_fSpawn_regen_target_default = 0.6;
 
 
-
-
-bool    glassCannon = false;
-float   first_aid_heal_default = 30.0;
-float 	g_fHealth_station_heal_default = 1.0;
-
-ConVar  sv_first_aid_heal_amt;
-ConVar  sv_health_station_heal_per_tick;
 ConVar  sv_spawn_regen_target;
+float 	g_fSpawn_regen_target_default = 0.6;
 ConVar  sv_challenge;
 
 
@@ -71,7 +64,7 @@ Handle 	g_hDiffMod_Timer;
 GameMod	g_eGameMode;	//int
 GameDif g_eGameDiff;
 
-int 	g_eGameCFG[sizeof(sConfItem)];	//array of individual conf items enabled or not
+int 	g_eGameCFG[ sizeof(sConfItem) ];	//array of individual conf items enabled or not
 
 public Plugin myinfo =
 {
@@ -142,9 +135,10 @@ public void OnPluginStart()
 	g_cfg_diffs_enabled		= CreateConVar("diffmoder_difficulties", "casual classic nightmare default", "Enabled difficulties, those not in this list cannot be selected.");
 	g_cfg_mods_enabled		= CreateConVar("diffmoder_mods", "runner kid crawler default", "Enabled mods, those not in this list cannot be selected.");
 	g_cfg_configs_enabled	= CreateConVar("diffmoder_configs", "realism hardcore doublejump glasscannon default", "Enabled configs, those not in this list cannot be selected.");
-
-
 	g_cfg_density_enabled	= CreateConVar("diffmoder_density", "1", "Enable the ability to select zombie spawn density.");
+	g_cfg_mutators			= CreateConVar("diffmoder_mutators", "", "Which mutators can people choose from?. Keeping empty disables.");
+	sv_mutators				= FindConVar("sv_mutators");
+
 
 
 	//Init zombiespeeds
@@ -155,7 +149,6 @@ public void OnPluginStart()
 	PrintToServer("%s %s by %s is starting ..", PLUGIN_NAME, VERSION, AUTHOR);
 
 	g_bEnable 						= g_cfg_diffmoder.BoolValue;
-
 
 	GetEnabledDiffs();
 	GetEnabledMods();
@@ -168,7 +161,7 @@ public void OnPluginStart()
 	//Events
 	HookEvent("nmrih_round_begin", Event_RoundBegin);
 	HookEvent("nmrih_reset_map", Event_Reset_Map);
-	HookEvent("player_spawn", Event_Spawn);
+	
 	//setup vscript proxy
 	if (g_bEnable && g_iEnt_VscriptProxy == -1)
         SetupVscriptProxy();
@@ -271,16 +264,15 @@ public Action Timertest(Handle timer)
 	int playercount = GetClientCount();
 	if ( playercount > 0 )
 	{
-		PrintToServer("auto_difficulty_default_timer fired but people are on the server; returning without setting default inits");	
-		g_hDiffMod_Timer = INVALID_HANDLE;
-		return Plugin_Continue;
+		PrintToServer("auto_difficulty_default_timer fired but people are on the server; returning without setting default inits");
 	}
 	else
 	{
 		GameMod_Init();
-		g_hDiffMod_Timer = INVALID_HANDLE;
-		return Plugin_Continue;
 	}
+	g_hDiffMod_Timer = INVALID_HANDLE;
+	delete timer;
+	return Plugin_Continue;
 }
 	
 
@@ -313,7 +305,6 @@ public void OnPluginEnd(){
 
 public void OnEntityCreated(int entity, const char[] classname)
 {
-
 	if(!g_bEnable ||  entity <= MaxClients || Game_GetMod() == GameMod_NoMod || !IsValidShamblerzombie(entity)) 
 		return;
 
@@ -325,9 +316,6 @@ public void OnEntityCreated(int entity, const char[] classname)
 public void OnEntityDestroyed(int entity){
 	if(g_bEnable && IsValidShamblerzombie(entity)) SDKUnhook(entity, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 }
-
-
-
 
 
 public void Event_RoundBegin(Event event, const char[] name, bool dontBroadcast)
@@ -363,79 +351,10 @@ void GameConfig_Def()
 }
 
 
-int defaultPlayerHealth;
-
-/*
-	Cycle Through players setting their max and current health to 1
-	Enable Sethealth on player spawn
-*/
-void InitGlassCannon(bool on = true)
-{
-	glassCannon = on;
-	FixGlassCannonHealths();
-}
-
-void FixGlassCannonHealths()
-{
-	for(int client = 1; client <= MaxClients; client++)
-	{
-		if (IsClientInGame(client) && IsPlayerAlive(client))
-		{
-			if (glassCannon)
-			{
-				if (!defaultPlayerHealth)
-					defaultPlayerHealth = GetMaxHealth(client);
-
-				SetEntityHealth(client, 1);
-				SetMaxHealth(client, 1);
-				
-			}
-			else
-				SetMaxHealth(client, defaultPlayerHealth);
-		}
-	}
-	//ConVars
-	if (glassCannon)
-	{
-		sv_first_aid_heal_amt.FloatValue 			= 0.0;
-		sv_health_station_heal_per_tick.FloatValue 	= 0.0;
-		sv_spawn_regen_target.FloatValue 			= 0.0;			
-	}
-	else
-	{
-		defaultPlayerHealth = 0;
-		sv_first_aid_heal_amt.FloatValue 			= first_aid_heal_default;
-		sv_health_station_heal_per_tick.FloatValue 	= g_fHealth_station_heal_default;
-		sv_spawn_regen_target.FloatValue 			= g_fSpawn_regen_target_default;		
-	}
-}
 
 
-void SetMaxHealth(int entityref, int val){
-	char functionBuffer[128];
-	Format(functionBuffer, sizeof(functionBuffer), "SetMaxHealth(%i)", val);
-	RunEntVScript(entityref, functionBuffer, g_iEnt_VscriptProxy);
-}
-int GetMaxHealth(int entityref){
-    return RunEntVScriptInt(entityref, "GetMaxHealth()", g_iEnt_VscriptProxy);
-}
 
-
-public Action Event_Spawn(Handle event, char[] name, bool dontBroadcast)
-{
-	if (!glassCannon)
-		return Plugin_Continue;
-		
-	int clientId = GetClientOfUserId(GetEventInt(event, "userid"));
-	if (clientId != 0 && IsClientInGame(clientId) && IsPlayerAlive(clientId))
-	{
-		SetEntityHealth(clientId, 1);
-		SetMaxHealth(clientId, 1);
-	}
-	return Plugin_Handled;
-}
-
-
+bool crawlerActive = false;
 
 void GameMod_Enable(GameMod mod)
 {
@@ -448,32 +367,39 @@ void GameMod_Enable(GameMod mod)
 		case GameMod_Runner:
 		{
 			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 1.0;
-			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
+			ov_runner_kid_chance.FloatValue = 0.0;
 			sv_spawn_regen_target.FloatValue = 0.0;
-			ConVarCrawler(false);
+			if (crawlerActive)
+				ConVarCrawler(false);
+
 			Game_ShamblerToRunner(GameMod_Runner);
 		}
 		case GameMod_Kid:
 		{
-			ov_runner_chance.FloatValue 	= g_fRunner_chance_default;
-			sv_max_runner_chance.FloatValue = g_fRunner_chance_max_default;
+			sv_max_runner_chance.FloatValue = ov_runner_chance.FloatValue = 0.0;
 			ov_runner_kid_chance.FloatValue = 1.0;
 			sv_spawn_regen_target.FloatValue = 0.0;
-			ConVarCrawler(false);
+			if (crawlerActive)
+				ConVarCrawler(false);			
+
 			Game_ShamblerToRunner(GameMod_Kid);
 		}
 		case GameMod_Crawler: 
 		{
-			ConVarCrawler(true);
+			if (crawlerActive)
+				ConVarCrawler(true);		
+
 			sv_spawn_regen_target.FloatValue = g_fSpawn_regen_target_default;
 		}
 		case GameMod_NoMod:
 		{
-			ov_runner_chance.FloatValue 	= g_fRunner_chance_default;
-			sv_max_runner_chance.FloatValue = g_fRunner_chance_max_default;
-			ov_runner_kid_chance.FloatValue = g_fRunner_kid_chance_default;
+			ov_runner_chance.FloatValue 	 = g_fRunner_chance_default;
+			sv_max_runner_chance.FloatValue  = g_fRunner_chance_max_default;
+			ov_runner_kid_chance.FloatValue  = g_fRunner_kid_chance_default;
 			sv_spawn_regen_target.FloatValue = g_fSpawn_regen_target_default;
-			ConVarCrawler(false);
+
+			if (crawlerActive)
+				ConVarCrawler(false);			
 		}
 	}
 }
@@ -490,14 +416,16 @@ void ConVarCrawler(bool on)
 		sv_zombie_crawler_health.IntValue = CRAWLERHEALTH_ANKLE;
 		g_fShambler_crawler_chance.FloatValue = CRAWLERCHANCE;		
 		sv_zombie_moan_freq.IntValue=3;
+		crawlerActive = true;
 	}
 	else
 	{
-		phys_pushscale.IntValue=1;
+		phys_pushscale.IntValue		=1;
 		sv_zombie_moan_freq.IntValue=1;
-		g_crawler_speed.IntValue=1;
+		g_crawler_speed.IntValue	=1;
 		sv_zombie_crawler_health.IntValue = sv_crawler_health_default;
 		g_fShambler_crawler_chance.FloatValue = g_fCrawler_chance_default;
+		crawlerActive = false;
 	}
 }
 

@@ -114,9 +114,6 @@ bool IsValidShamblerzombie(int zombie)
 //fastest would be to hook zombie speed in here to prevent unnecessary checks
 public void SDKHookCB_ZombieSpawnPost(int zombie)
 {
-    // PrintToServer("spawnpost happen");
-	// if( !IsValidShamblerzombie(zombie) )
-	// 	SDKUnhook(zombie, SDKHook_SpawnPost, SDKHookCB_ZombieSpawnPost);
 
 	switch( Game_GetMod() )	{
 		case GameMod_Runner:		BecomeRunner(zombie);

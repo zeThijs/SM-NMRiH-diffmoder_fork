@@ -1,3 +1,6 @@
+/*
+	Last checked for 1.3.5
+*/
 "Games"
 {
 	"nmrih"
@@ -8,7 +11,7 @@
 			{
 				// char * (int)
 				"windows" "\x55\x8B\xEC\x83\x7D\x08\xFF\x56\x8B\xF1**\xB8****\x5E\x5D\xC2\x04\x00******************\xE8****\x85\xC0**\x8B\xCE\xE8**********\x85\xC0**\x83\x38\x00**\xFF\x75\x08\x33\xC9******\x0F\x45\xC1\x50\xE8****\x83\xC4\x08\x5E\x5D\xC2\x04\x00"
-				"linux" "@_ZN14CBaseAnimating15GetSequenceNameEi"
+				"linux" "@_ZN14CBaseAnimating15GetSequenceNameEi" //1.3.5 works
 			}
 		}
 		"Offsets"
@@ -18,14 +21,6 @@
 				"windows" "0"
 				"linux" "1"
 			}
-
-			"CNMRiH_BaseZombie::m_bCrawler"
-			{
-				// bool
-				"windows" "3732"
-				"linux" "3748"
-			}
-
 			"CBaseAnimating::GetSequenceGroundSpeed"
 			{
 				// float (CStudioHdr *,int)

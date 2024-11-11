@@ -141,6 +141,8 @@ ConVar sv_max_runner_chance, ov_runner_chance,
 	g_cfg_configs_enabled;
 
 ConVar  g_cfg_density_enabled;
+ConVar  g_cfg_mutators;
+ConVar  sv_mutators;
 bool g_bEnable;
 
 
@@ -196,9 +198,34 @@ void TopMenu_ShowToClient(const int client)
 		Format(buffer, sizeof(buffer), "%T", "TopMenuDensity", client);
 		menu.AddItem("3", buffer);
 	}
+
+	char mutators[512];
+	g_cfg_mutators.GetString(mutators, 256);	
+	if ( !StrEqual(mutators, "", false) )
+	{
+		char mutators_single[16][32];
+		int nMutators = ExplodeString(mutators, " ", mutators_single, 16, 32, false);
+		if (nMutators<=1)
+		{
+			nMutators = ExplodeString(mutators, ",", mutators_single, 16, 32, false);
+			if (nMutators<=1)
+			{
+				nMutators = ExplodeString(mutators, ", ", mutators_single, 16, 32, false);
+			}
+		}
+		for (int i = 0; i<nMutators; i++)
+		{
+			char buff[8];
+			IntToString(i+3, buff, sizeof(buff));
+			menu.AddItem( buff, mutators_single[i] );
+		}
+	}
+
 	menu.ExitButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
 }
+
+
 
 public int MenuHandler_TopMenu(Menu menu, MenuAction action, int client, int param2)
 {
@@ -216,10 +243,161 @@ public int MenuHandler_TopMenu(Menu menu, MenuAction action, int client, int par
 				case 2: ConfMenu_ShowToClient(client);
 				case 3: DensityMenu_ShowToClient(client);
 			}
+			//Handle Mutators
+			char mutator[32];
+			char junk[1]; //cant retrieve displaybuffer without retrieving infobuffer..  ¯\_(ツ)_/¯
+			GetMenuItem(menu, param2, junk,sizeof(junk), _, mutator, sizeof(mutator), client);
+			Mutator_Vote(client, mutator);	
 		}
 	}
 	return 0;
 }
+
+
+void Mutator_Vote(const int client, char[] conf)
+{
+	if(!Game_CanEnable(client)) return;
+
+	if(IsVoteInProgress())
+	{
+		PrintToChat(client, "\x04%T\x01 %T", "ChatFlag", client, "VoteInProgress", client);
+		return;
+	}
+	if(!TestVoteDelay(client)) return;
+
+	char item_yes[32], item_no[32], name[32], item_yes_flag[32], item_no_flag[32];
+	GetClientName(client, name, sizeof(name));
+	Format(item_yes, sizeof(item_yes), "%T", "On", client);
+	Format(item_no, sizeof(item_no), "%T", "Off", client);
+	Format(item_yes_flag, sizeof(item_yes_flag), "%d", conf);
+	Format(item_no_flag, sizeof(item_no_flag), "Off,%d", conf);
+
+
+	Menu menu = new Menu(MenuHandler_MutatorVote, MENU_ACTIONS_ALL);
+	menu.SetTitle(conf, client, name, conf);
+	menu.AddItem(item_yes_flag, item_yes);
+	menu.AddItem(item_no_flag, item_no);
+	menu.DisplayVoteToAll(MENUDISPLAY_TIME);
+    
+	return;
+}
+
+public int MenuHandler_MutatorVote(Menu menu, MenuAction action, int param1, int param2)
+{
+	switch(action){
+		case MenuAction_End: delete menu;
+		case MenuAction_DisplayItem:
+		{
+			char display[64], item_yes[32], item_no[32];
+			Format(item_yes, sizeof(item_yes), "%T", "On", param1);
+			Format(item_no, sizeof(item_no), "%T", "Off", param1);
+			menu.GetItem(param2, "", 0, _, display, sizeof(display));
+			if(!strcmp(display, item_no) || !strcmp(display, item_yes)) return RedrawMenuItem(display);
+		}
+		case MenuAction_VoteCancel: PrintToChatAll("\x04%t\x01 %t", "ChatFlag", "NoVotesCast");
+		case MenuAction_VoteEnd:
+		{
+
+
+
+			//get chosen mutator
+			char title[64];
+			menu.GetTitle(title, sizeof(title));
+			//get all active mutators
+			char mutators[512];
+			sv_mutators.GetString(mutators, 256);	
+
+			char mutators_single[16][32];
+			int nMutators = ExplodeString(mutators, " ", mutators_single, 16, 32, false);
+			if (nMutators<=1)
+			{
+				nMutators = ExplodeString(mutators, ",", mutators_single, 16, 32, false);
+				if (nMutators<=1)
+				{
+					nMutators = ExplodeString(mutators, ", ", mutators_single, 16, 32, false);
+				}
+			}
+
+			bool bActive = false;
+			int iActive = 0;
+			//check mutator already active, skip
+			for (int i = 0; i<nMutators; i++)
+			{
+				// PrintToServer(mutators_single[i]);
+				if (StrEqual(mutators_single[i], title))
+				{
+					// PrintToServer("Mutator active, skipping");
+					iActive=i;
+					bActive=true;
+					break;
+				}
+			}
+
+			char item[64];
+			
+			int votes, totalVotes;
+			GetMenuVoteInfo(param2, votes, totalVotes);
+			menu.GetItem(param1, item, sizeof(item));
+			bool isOff = StrContains(item, "Off") == 0;
+			
+
+
+			GameConf conf;
+			if(isOff)
+			{
+				char item_no[2][32];
+				ExplodeString(item, ",", item_no, 2, 32);
+				conf = view_as<GameConf>(StringToInt(item_no[StrEqual(item_no[0], "Off") ? 1 : 0]));
+			}
+			else conf = view_as<GameConf>(StringToInt(item));
+			if(!isOff && param1 == 1) votes = totalVotes - votes;
+			if((!isOff && FloatCompare(GetVotePercent(votes, totalVotes),VOTE_LIMIT) < 0 && !param1)
+			|| (isOff && param1 == 1))
+			{
+				
+				if(conf == GameConf_Default) 
+					PrintToChatAll("\x04%t\x01 %t", "ChatFlag", "VoteFailed");
+				else
+				{
+					//Vote switch to off
+					if (!bActive)
+					{
+						PrintToChatAll("\x04%t\x01 %s %t, but is already off", "ChatFlag", title, "VoteFinishToOff");
+						return 0;
+					}
+					else
+					{	
+						Format(mutators_single[iActive], 32, "");
+						char newMutators[512]
+						ImplodeStrings(mutators_single, nMutators-1, ",", newMutators, sizeof(newMutators))
+						sv_mutators.SetString(newMutators);
+						PrintToChatAll("\x04%t\x01 %s %t", "ChatFlag", title, "VoteFinishToOff");
+					}
+
+				}
+				return 0;
+			}
+
+			//Vote switch to on
+			if (bActive)
+			{
+				PrintToChatAll("\x04%t\x01 %s %t, but it is already active", "ChatFlag", title , conf == GameConf_Default ? "VoteFinish" : "VoteFinishToOn");
+				return 0;
+			}
+			else
+			{
+				PrintToChatAll("\x04%t\x01 %s %t", "ChatFlag", title , conf == GameConf_Default ? "VoteFinish" : "VoteFinishToOn");
+				char newMutators[512]
+				Format(newMutators, sizeof(newMutators), "%s, %s", mutators, title);
+				sv_mutators.SetString(newMutators);
+			}
+			
+		}
+	}
+	return 0;
+}
+
+
 
 bool Game_CanEnable(const int client)
 {
