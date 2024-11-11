@@ -29,6 +29,7 @@ nmrih_diffmoder_casual_cooldown     -   Casual switch cooldown time.            
 nmrih_autodefault_timer             -   Time in seconds until diffmoder reverts to default gamemode.   default:  1200
 nmrih_diffmoder_mapchange_default   -   Change the diffmode to default after map change. 0: off, 1: on.default:  1
 diffmoder_difficulties              -   Enabled game difficulties. Difficulties not in this list cannot be diffmoded to. default: "casual classic nightmare"
+diffmoder_mutators                  -   "delimited, list, of, mutators: Which mutators can people choose from?. Keeping empty disables."
 </pre>
 
 ## Credits:
