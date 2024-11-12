@@ -37,7 +37,7 @@
 
 #define PLUGIN_NAME "[NMRiH] Difficulty Moder "
 #define AUTHOR "Mostten, Rogue Garlicbread|Thijs"
-#define VERSION "2.5.0"
+#define VERSION "2.5.1"
 #define CRAWLERHEALTH_ANKLE 100
 #define PUSHSCALE_ANKLE 2000
 #define CRAWLERCHANCE 1.0

@@ -242,12 +242,15 @@ public int MenuHandler_TopMenu(Menu menu, MenuAction action, int client, int par
 				case 1: DifMenu_ShowToClient(client);
 				case 2: ConfMenu_ShowToClient(client);
 				case 3: DensityMenu_ShowToClient(client);
+				default:	//Handle Mutators
+				{
+				char mutator[32];
+				char junk[1]; //cant retrieve displaybuffer without retrieving infobuffer..  ¯\_(ツ)_/¯
+				GetMenuItem(menu, param2, junk,sizeof(junk), _, mutator, sizeof(mutator), client);
+				Mutator_Vote(client, mutator);	
+				}
 			}
-			//Handle Mutators
-			char mutator[32];
-			char junk[1]; //cant retrieve displaybuffer without retrieving infobuffer..  ¯\_(ツ)_/¯
-			GetMenuItem(menu, param2, junk,sizeof(junk), _, mutator, sizeof(mutator), client);
-			Mutator_Vote(client, mutator);	
+
 		}
 	}
 	return 0;
