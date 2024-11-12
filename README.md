@@ -1,6 +1,10 @@
 # [NMRiH] NMRiH Diffmoder fork     
 **Sourcemod plugin which allows changing of gamemode via voting.**
 
+11/11/2024
+Added feature: mutator toggle support, convar diffmoder_mutators
+
+
 For base information about the plugin go here:
 *https://forums.alliedmods.net/showthread.php?t=301322*
 
@@ -29,11 +33,11 @@ nmrih_diffmoder_casual_cooldown     -   Casual switch cooldown time.            
 nmrih_autodefault_timer             -   Time in seconds until diffmoder reverts to default gamemode.   default:  1200
 nmrih_diffmoder_mapchange_default   -   Change the diffmode to default after map change. 0: off, 1: on.default:  1
 diffmoder_difficulties              -   Enabled game difficulties. Difficulties not in this list cannot be diffmoded to. default: "casual classic nightmare"
+diffmoder_mutators                  -   "delimited, list, of, mutators: Which mutators can people choose from?. Keeping empty disables."
 </pre>
 
 ## Credits:
 <pre>
-Feel free to use the code or plugin in any way
 
 Credits:
 
