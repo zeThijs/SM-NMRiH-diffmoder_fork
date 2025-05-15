@@ -22,7 +22,8 @@ enum GameConf{
 	GameConf_Hardcore,
 	GameConf_Infinity,
 	GameConf_DoubleJump,
-	GameConf_GlassCannon
+	GameConf_GlassCannon,
+	GameConf_Challenge,
 };
 
 

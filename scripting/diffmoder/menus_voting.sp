@@ -108,7 +108,6 @@ enum GameConf{
 	GameConf_DoubleJump,
 	GameConf_GlassCannon,
 	GameConf_Challenge,
-	GameConf_INVALID		//invalid or error entry, keep last!!
 };
 
 ConVar sv_max_runner_chance, ov_runner_chance,	

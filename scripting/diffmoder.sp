@@ -271,7 +271,6 @@ public Action Timertest(Handle timer)
 		GameMod_Init();
 	}
 	g_hDiffMod_Timer = INVALID_HANDLE;
-	delete timer;
 	return Plugin_Continue;
 }
 	
