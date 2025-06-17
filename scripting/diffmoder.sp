@@ -37,7 +37,7 @@
 
 #define PLUGIN_NAME "[NMRiH] Difficulty Moder "
 #define AUTHOR "Mostten, Rogue Garlicbread|Thijs"
-#define VERSION "2.5.1"
+#define VERSION "2.5.2"
 #define CRAWLERHEALTH_ANKLE 100
 #define PUSHSCALE_ANKLE 2000
 #define CRAWLERCHANCE 1.0
@@ -61,8 +61,7 @@ ConVar  sv_challenge;
 
 Handle 	g_hDiffMod_Timer;
 
-GameMod	g_eGameMode;	//int
-GameDif g_eGameDiff;
+
 
 int 	g_eGameCFG[ sizeof(sConfItem) ];	//array of individual conf items enabled or not
 
@@ -288,10 +287,25 @@ public void OnClientConnected()
 ///////////////////////////////////////////
 
 
+//find proper gamediff index from convar
+GameDif GetDefaultGameDiffIndex()
+{
+	char buff[128];
+	g_cfg_difficulty.GetString(buff, sizeof(buff));
+	for (int i=0; i<sizeof(DifStrings); i++)
+		if (StrEqual(DifStrings[i], buff, false))
+			return view_as<GameDif>(i);
+
+	LogError("Did not find difficulty: %s in difficulty list. Setting g_eGameDiff to default", buff);
+	return view_as<GameDif>(0);
+}
+
 
 void GameMod_Init(){
 	GameMod_Enable(view_as<GameMod>(g_cfg_gamemode.IntValue));
-	GameDiff_Enable(view_as<GameDif>(g_cfg_difficulty.IntValue));
+
+	GameDiff_Enable(GetDefaultGameDiffIndex());
+
 	GameConfig_Def();
 }
 
@@ -431,10 +445,13 @@ void ConVarCrawler(bool on)
 
 void GameDiff_Enable(GameDif dif)
 {	
-	if (!g_eGameDiff)	//if default gamemod, save def gamemod's value instead of 0
-		g_eGameDiff = view_as<GameDif>(g_cfg_difficulty.IntValue);
-	else	
-		g_eGameDiff = dif;
+	// if (g_eGameDiff == view_as<GameDif>(0))	//if default gamemod, save def gamemod's value instead of 0
+	// {
+	// 	g_eGameDiff = GetDefaultGameDiffIndex();
+	// }
+	// else	
+	g_eGameDiff = dif;
+
 	switch(dif)
 	{
 		case GameDif_Classic:	{sv_difficulty.SetString("classic");}

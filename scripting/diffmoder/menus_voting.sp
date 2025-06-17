@@ -145,6 +145,9 @@ ConVar  sv_mutators;
 bool g_bEnable;
 
 
+GameMod	g_eGameMode;	//int
+GameDif g_eGameDiff;
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,8 +167,8 @@ void GameInfo_ShowToClient(const int client)
 {
 	//move to variable for debug reason
 	int moditem = view_as<int>(Game_GetMod());
-	int difitem = view_as<int>(Game_GetDif());
-
+	int difitem = view_as<int>(Game_GetDif);
+		
 	PrintToChat(client, "\x04%T \x01%T \x04%T \x01%T\n\x04%T \x01%T \x04%T \x01%T\n\x04%T \x01%T",
 		"ModFlag", client,		sModItem[moditem], client,
 		"DifFlag", client,		sDifItem[difitem], client,
@@ -325,10 +328,8 @@ public int MenuHandler_MutatorVote(Menu menu, MenuAction action, int param1, int
 			//check mutator already active, skip
 			for (int i = 0; i<nMutators; i++)
 			{
-				// PrintToServer(mutators_single[i]);
 				if (StrEqual(mutators_single[i], title))
 				{
-					// PrintToServer("Mutator active, skipping");
 					iActive=i;
 					bActive=true;
 					break;
@@ -943,7 +944,6 @@ public int MenuHandler_DisplayVote(Menu menu, MenuAction action, int param1, int
 			{
 				realvalue = 10;
 			}
-			// PrintToServer("itemtoint: %i",  realvalue);
 
 			if(param1 == 1) 
 				votes = totalVotes - votes;
