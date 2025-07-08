@@ -63,5 +63,5 @@ Credits:
 Mostten - [NMRiH] Difficulty and Mod changer        - Original diffmoder plugin *https://forums.alliedmods.net/showthread.php?t=301322*
 Ryan    - [NMRiH] Zombie Speeds (v1.6, 2020-04-06)  - speed manip snippets
 Dysphie - [NMRiH] Backpack 2                        - Vscript Proxy, and giving the idea of using it
-Blueberry - Translations
+Blueberryy - Translations
 </pre>
