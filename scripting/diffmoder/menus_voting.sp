@@ -167,7 +167,7 @@ void GameInfo_ShowToClient(const int client)
 {
 	//move to variable for debug reason
 	int moditem = view_as<int>(Game_GetMod());
-	int difitem = view_as<int>(Game_GetDif);
+	int difitem = view_as<int>(Game_GetDif());
 		
 	PrintToChat(client, "\x04%T \x01%T \x04%T \x01%T\n\x04%T \x01%T \x04%T \x01%T\n\x04%T \x01%T",
 		"ModFlag", client,		sModItem[moditem], client,
