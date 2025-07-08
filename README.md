@@ -1,24 +1,35 @@
 # [NMRiH] NMRiH Diffmoder fork     
-**Sourcemod plugin which allows changing of gamemode via voting.**
+## Description
+**Sourcemod plugin** which allows changing of **gamemode** via **voting.** 
+You can vote to change the difficulty and mod or the other configs, for example: Enable the zombies to run all or kids all......
 
-11/11/2024
-Added feature: mutator toggle support, convar diffmoder_mutators
+
+**[Commands]**
+- sm_dif: open the menu;
+- sm_difshow: show your curren info of the mod.
 
 
-For base information about the plugin go here:
-*https://forums.alliedmods.net/showthread.php?t=301322*
 
-This fork includes some changes and features to the original, such as:
+## Changes to the original
+This **fork** includes some **changes** and features to the original, such as:
 
-- Automatically reverts back to the default gamemode after the server has been empty for a while. This may be set with the nmrih_autodefault_timer ConVar
-- A new mode to play: Speedycrawlers, which converts all zombies into speedy crawlers.
-- The option to toggle double jump; requires Double Jump (1.0.1) by Paegus (_https://forums.alliedmods.net/showthread.php?p=895212_)
-- Toggling Mutators
-- Changing spawn density
-- Glasscannon mode ( players shatter if lightly touched )
-- Casual cooldown, useful when players inevitably abuse casual switch for infinite respawns
+- Automatically **revert**s back to the default **gamemode** after the server has been empty for a while. This may be set with the nmrih_autodefault_timer ConVar
+- A new mode to play: **Speedycrawlers**, which converts all zombies into speedy crawlers.
+- The option to **toggle double jump**; requires Double Jump (1.0.1) by Paegus (_https://forums.alliedmods.net/showthread.php?p=895212_)
+- **Toggling Mutators**
+- **Changing spawn density**
+- **Glasscannon mode** ( players shatter if lightly touched )
+- **Casual cooldown**, useful when players inevitably abuse casual switch for infinite respawns
+
+**[Changelog]**
+- 11/11/2024 **Add**ed feature: **mutator toggle** support, convar diffmoder_mutators
+
+**[Language]**
+English and sChinese or the other by yourself to edit the file of the path is translations/nmrih.diffmoder.phrases.txt
+If you translate to your language, put a pull request I will integrate the translations.
 
 ## Requires DHooks:
+Note, only required on older sourcemod versions. Newer sourcemod versions already have DHooks internally
 https://forums.alliedmods.net/showthread.php?t=180114
 
 
@@ -49,7 +60,8 @@ diffmoder_mutators, , Which mutators can people choose from?. Keeping empty disa
 
 Credits:
 
-Mostten - [NMRiH] Difficulty and Mod changer        - Original diffmoder plugin
+Mostten - [NMRiH] Difficulty and Mod changer        - Original diffmoder plugin *https://forums.alliedmods.net/showthread.php?t=301322*
 Ryan    - [NMRiH] Zombie Speeds (v1.6, 2020-04-06)  - speed manip snippets
 Dysphie - [NMRiH] Backpack 2                        - Vscript Proxy, and giving the idea of using it
+Blueberry - Translations
 </pre>
